@@ -199,4 +199,263 @@ It's highly recommended to create a virtual environment to manage your project d
 `pip install pytest`               # For testing your code
 
 
+# TrustID System Overview
+
+## 1️⃣ User Model
+- **Description**: Stores user identity data
+- **Storage**: PostgreSQL
+- **Data Fields**:
+  - `user_id (UUID)` - Unique user identifier
+  - `first_name (String)` - User’s first name
+  - `last_name (String)` - User’s last name
+  - `email (String)` - User’s email
+  - `phone_number (String)` - Contact number
+  - `dob (Date)` - Date of birth
+  - `created_at (Timestamp)` - Date of account creation
+  - `updated_at (Timestamp)` - Last profile update
+
+- **How it is Obtained**:
+  - Entered by the user during registration.
+
+- **Relationships**:
+  - Links to **DID Model** (Each user gets a unique Decentralized ID)
+  - Links to **Credentials** (A user can hold multiple credentials)
+
+- **Future Changes**:
+  - The user’s national ID and DID may be updated in the Hyperledger Indy Ledger for verification.
+
+---
+
+## 2️⃣ DID (Decentralized Identifier) Model
+- **Description**: Stores unique blockchain-based ID for each user
+- **Storage**: Hyperledger Indy Ledger
+- **Data Fields**:
+  - `did_id (UUID)` - Unique DID
+  - `user_id (UUID)` - Links to the User Model
+  - `public_key (String)` - Public key for verification
+  - `private_key (Encrypted String)` - Private key (not stored directly; only a reference)
+  - `created_at (Timestamp)`
+
+- **How it is Obtained**:
+  - Created automatically when a new user registers.
+
+- **Relationships**:
+  - Links to **User Model** (Each user has one DID)
+  - Links to **Schema Model** (A DID is used to verify credentials)
+
+- **Future Changes**:
+  - DID data never changes, but if a user re-registers, a new DID can be issued.
+
+---
+
+## 3️⃣ Schema Model
+- **Description**: Defines the structure of credentials issued
+- **Storage**: Hyperledger Indy Ledger
+- **Data Fields**:
+  - `schema_id (UUID)` - Unique identifier
+  - `schema_name (String)` - Credential name (e.g., "National ID Schema")
+  - `attributes (JSONB)` - List of fields in the credential
+  - `created_at (Timestamp)`
+
+- **How it is Obtained**:
+  - Created by the TrustID system admin when a new credential type is needed.
+
+- **Relationships**:
+  - Links to **DID Model** (Schemas define what can be assigned to a DID)
+  - Links to **Credential Definition Model** (Schemas are used to generate credentials)
+
+- **Future Changes**:
+  - Schema updates result in new versions, but old credentials remain valid.
+
+---
+
+## 4️⃣ Credential Definition Model
+- **Description**: Hashes of issued credentials stored for verification
+- **Storage**: Hyperledger Indy Ledger
+- **Data Fields**:
+  - `cred_def_id (UUID)` - Unique ID
+  - `schema_id (UUID)` - Links to a Schema
+  - `issuer_did (UUID)` - DID of the credential issuer
+  - `signature_type (String)` - Signature method used
+  - `created_at (Timestamp)`
+
+- **How it is Obtained**:
+  - Generated when a user receives a credential.
+
+- **Relationships**:
+  - Links to **Schema Model** (Each Credential Definition is based on a Schema)
+  - Links to **Credential Model** (Credential records use this definition)
+
+- **Future Changes**:
+  - If a schema is updated, a new credential definition must be issued.
+
+---
+
+## 5️⃣ Credential Model
+- **Description**: Stores issued credentials
+- **Storage**: PostgreSQL & Hyperledger Indy Ledger
+- **Data Fields**:
+  - `credential_id (UUID)` - Unique credential ID
+  - `cred_def_id (UUID)` - Links to Credential Definition
+  - `user_id (UUID)` - Links to the User Model
+  - `attributes (JSONB)` - Contains the credential’s data
+  - `status (String)` - Active, Revoked, or Expired
+  - `created_at (Timestamp)`
+
+- **How it is Obtained**:
+  - Issued by an authorized organization (e.g., government agency, university).
+
+- **Relationships**:
+  - Links to **User Model** (Each user can have multiple credentials)
+  - Links to **Credential Definition** (A credential follows a defined structure)
+  - Links to **Revocation Registry** (Credential status is tracked)
+
+- **Future Changes**:
+  - If revoked, its status updates in PostgreSQL & Indy Ledger.
+
+---
+
+## 6️⃣ Revocation Registry Model
+- **Description**: Tracks revoked credentials
+- **Storage**: Hyperledger Indy Ledger
+- **Data Fields**:
+  - `revocation_id (UUID)` - Unique revocation ID
+  - `credential_id (UUID)` - Links to revoked Credential
+  - `revoked_at (Timestamp)`
+
+- **How it is Obtained**:
+  - Updated when a credential is revoked.
+
+- **Relationships**:
+  - Links to **Credential Model** (Stores revocation status)
+
+- **Future Changes**:
+  - Once revoked, credentials cannot be reinstated.
+
+---
+
+## 7️⃣ Verification Request Model
+- **Description**: Tracks verification history
+- **Storage**: PostgreSQL
+- **Data Fields**:
+  - `verification_id (UUID)` - Unique ID
+  - `verifier_id (UUID)` - Organization requesting verification
+  - `user_id (UUID)` - User being verified
+  - `status (String)` - Pending, Verified, Failed
+  - `timestamp (Timestamp)`
+
+- **How it is Obtained**:
+  - Created when an organization requests user verification.
+
+- **Relationships**:
+  - Links to **User Model** (User being verified)
+  - Links to **Credential Model** (Verification is based on credentials)
+
+- **Future Changes**:
+  - Verification history remains immutable.
+
+---
+
+## 8️⃣ Encryption Key Model
+- **Description**: Stores encryption keys for data security
+- **Storage**: Local (OpenSSL)
+- **Data Fields**:
+  - `key_id (UUID)` - Unique key ID
+  - `user_id (UUID)` - User owning the key
+  - `public_key (String)` - Public key (used for verification)
+  - `private_key (Encrypted)` - Private key (stored securely)
+  - `created_at (Timestamp)`
+
+- **How it is Obtained**:
+  - Generated using OpenSSL upon user registration.
+
+- **Relationships**:
+  - Links to **DID Model** (Keys are used to sign transactions)
+
+- **Future Changes**:
+  - Keys can be rotated if compromised.
+
+---
+
+## Summary Table
+
+| **Model**            | **Storage**               | **How It’s Obtained**                          | **Changes to Other Platforms?**         |
+|----------------------|---------------------------|------------------------------------------------|-----------------------------------------|
+| **User**             | PostgreSQL                | Entered by user                               | Links to DID on Indy Ledger            |
+| **DID**              | Indy Ledger               | Auto-generated                                 | No changes                             |
+| **Schema**           | Indy Ledger               | Created by system admin                       | Updates require new versions           |
+| **Credential Definition** | Indy Ledger          | Created when a credential is issued           | Requires updates if schema changes     |
+| **Credential**       | PostgreSQL + Indy Ledger  | Issued by an entity                           | Status updates in both DBs             |
+| **Revocation Registry** | Indy Ledger            | When a credential is revoked                  | No changes after revocation            |
+| **Verification Request** | PostgreSQL           | Created when verification is requested        | Status updates                         |
+| **Encryption Keys**  | Local (OpenSSL)           | Auto-generated                                 | Can be rotated                         |
+
+---
+
+## 1️⃣ Types of Documents to Be Verified and Stored
+
+### How These Credentials Are Captured:
+1. **Manual Entry** – The user selects a credential type, and the system generates a form with relevant fields based on the schema.
+2. **Document Upload** – Optical Character Recognition (OCR) or AI-based extraction tools analyze the document and extract the required data fields.
+3. **Hybrid Approach** – Users upload a document, but they also get an editable form to verify or correct extracted details.
+
+### Matching Credentials to Schema:
+- When a user enters details manually, the input fields match the predefined schema stored in Hyperledger Indy.
+- If a document is uploaded, only the required attributes are extracted and formatted correctly.
+- The system validates the format and consistency of the credential before storing it in PostgreSQL and Hyperledger Indy Ledger.
+
+---
+
+## Sample Credentials
+
+### National ID / Passport
+- `credential_type`: "National ID" / "Passport"
+- `holder_name`: Full name
+- `date_of_birth`: YYYY-MM-DD
+- `id_number`: Unique ID / Passport Number
+- `gender`: Male / Female / Other
+- `country_of_issue`: Country Name
+- `expiration_date`: YYYY-MM-DD
+- `issuing_authority`: Government Agency
+
+### Driver’s License
+- `credential_type`: "Driver’s License"
+- `holder_name`: Full name
+- `date_of_birth`: YYYY-MM-DD
+- `license_number`: Unique License ID
+- `issue_date`: YYYY-MM-DD
+- `expiration_date`: YYYY-MM-DD
+- `license_class`: Type of Vehicle Allowed
+- `issuing_authority`: Government Transport Agency
+
+### Educational Certificate
+- `credential_type`: "Educational Certificate"
+- `holder_name`: Full name
+- `institution_name`: Name of School/University
+- `degree`: Type of Qualification (e.g., BSc, MSc)
+- `field_of_study`: Major/Discipline
+- `date_of_graduation`: YYYY-MM-DD
+- `certificate_id`: Unique Serial Number
+- `grade`: Final Grade (Optional)
+- `issuing_authority`: Name of Institution
+
+### Employment Certificate
+- `credential_type`: "Employment Certificate"
+- `holder_name`: Full name
+- `company_name`: Employer Name
+- `job_title`: Position Held
+- `employment_start_date`: YYYY-MM-DD
+- `employment_end_date`: YYYY-MM-DD or "Present"
+- `salary_range`: Optional (Currency & Amount)
+- `supervisor_contact`: (Name & Email)
+- `issuing_authority`: HR Department / Company Representative
+
+### Other Types of Credentials
+- **Professional License (Medical, Legal, Engineering, etc.)**
+- **Property/Land Ownership Certificate**
+- **Business Registration Certificate**
+
+These details are captured, verified, and stored in the system as per the user’s consent and system permissions.
+
+
 
