@@ -157,7 +157,7 @@ This approach ensures a **secure, scalable, and reliable** system where only **v
 ```
 
 ```
-# TrustID Project Setup Guide
+# Project Setup Guide
 
 ## Prerequisites
 
@@ -169,9 +169,8 @@ Ensure you have the following installed on your system:
 
 ### 1. Create a Virtual Environment
 It's highly recommended to create a virtual environment to manage your project dependencies.
+~~~
 
-
-```bash
 python3 -m venv trustid-env
 source trustid-env/bin/activate  # Activate the virtual environment
 Install Required Python Packages
