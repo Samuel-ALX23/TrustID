@@ -1,4 +1,5 @@
-# 🚀 TrustID: Blockchain-Powered Digital Identity Verification
+# 🚀 TrustID: Blockchain-Powered Digital Identity Verification 
+# TrustID Data Engineering
 
 
 
@@ -36,7 +37,6 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 
 
 ```markdown
-# TrustID Data Engineering
 
 ## Project Structure
 
@@ -156,7 +156,7 @@ This approach ensures a **secure, scalable, and reliable** system where only **v
 
 ```
 
-
+```
 # TrustID Project Setup Guide
 
 ## Prerequisites
@@ -173,3 +173,14 @@ It's highly recommended to create a virtual environment to manage your project d
 ```bash
 python3 -m venv trustid-env
 source trustid-env/bin/activate  # Activate the virtual environment
+Install Required Python Packages
+Once inside your virtual environment, install the required dependencies for the project.
+
+pip install sqlalchemy            # ORM for interacting with PostgreSQL
+pip install psycopg2-binary       # PostgreSQL adapter for SQLAlchemy
+pip install indy-sdk              # Hyperledger Indy SDK for interacting with Indy Ledger
+pip install cryptography          # For encryption and decryption tasks
+pip install requests              # For making HTTP requests (e.g., integration with backend)
+pip install python-dotenv         # For loading environment variables from .env files
+pip install openSSL               # OpenSSL bindings for Python (if needed for encryption)
+pip install pytest                # For testing your code
