@@ -34,49 +34,54 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 
 
 
+## Project Structure
+
+```
 TrustID-DataEngineering/
-│── data_ingestion/
+├── data_ingestion/
 │   ├── blockchain_listener.py  # Monitors Hyperledger Indy for changes
 │   ├── api_ingestion.py        # Fetches user data from the app
 │   ├── file_ingestion.py       # Processes CSV/JSON credential uploads
 │   ├── scheduler.py            # Automates data ingestion jobs
 │
-│── data_processing/
+├── data_processing/
 │   ├── transformations.py      # Data cleaning, formatting, deduplication
 │   ├── encryption.py           # Handles OpenSSL-based encryption
 │   ├── identity_resolution.py  # Prevents duplicate identity records
 │
-│── storage/
+├── storage/
 │   ├── models/
 │   │   ├── blockchain_schema.sql  # Schema for Hyperledger Indy storage
 │   │   ├── relational_schema.sql  # PostgreSQL schema for user/credential data
 │   │   ├── document_store.json    # (Optional) NoSQL schema for extra metadata
 │   ├── storage_manager.py        # Manages reading/writing to databases
 │
-│── integration/
+├── integration/
 │   ├── data_api.py               # Provides API endpoints for data retrieval
 │   ├── event_notifier.py         # Sends notifications when credentials update
 │
-│── config/
+├── config/
 │   ├── settings.yaml             # Configuration settings
 │   ├── secrets.env               # Environment variables (DO NOT COMMIT)
 │
-│── tests/
+├── tests/
 │   ├── test_ingestion.py         # Tests data ingestion scripts
 │   ├── test_processing.py        # Tests data processing functions
 │   ├── test_storage.py           # Tests storage interactions
 │
-│── scripts/
+├── scripts/
 │   ├── setup_db.py               # Initializes databases
 │   ├── load_sample_data.py        # Loads test credential data
 │
-│── docs/
+├── docs/
 │   ├── architecture.md           # Explanation of data flow & design
 │   ├── storage_design.md         # Database schema details
 │
-│── requirements.txt              # Python dependencies
-│── README.md                     # Project overview
-│── .gitignore                     # Ignore unnecessary files
+├── requirements.txt              # Python dependencies
+├── README.md                     # Project overview
+├── .gitignore                     # Ignore unnecessary files
+```
+
 
 
 
