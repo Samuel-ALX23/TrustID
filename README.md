@@ -9,11 +9,23 @@ TrustID is a blockchain-powered digital identity verification system that ensure
 - ✅ **Revocation Registry** to track and prevent fraudulent credentials
 - ✅ **Seamless Integration** for organizations to verify credentials in real-time
 
+---
+
 ## 🔗 Technologies Used
-- **Hyperledger Indy** → Decentralized Identity Ledger
-- **PostgreSQL** → User & Credential Storage
-- **OpenSSL** → Encryption & Key Management
-- **Python / Node.js** → Backend Development
+
+- | Component            | Technology Used |
+|----------------------|----------------|
+| **Blockchain Ledger** | Hyperledger Indy  → Decentralized Identity Ledger |
+| **Database**        | PostgreSQL → User & Credential Storage |
+| **Encryption**      | OpenSSL  → Encryption & Key Management |
+| **Backend**        | Node.js |
+| **Version Control** | Git & GitHub |
+| **Dev Environment** | VS Code, Jupyter Notebook |
+| **scripting** | Python|
+
+---
+
+
 
 ## 📌 Our Mission
 To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
@@ -71,20 +83,6 @@ Contains documentation:
 - **`architecture.md`** → Explains how data flows through the system.
 - **`storage_design.md`** → Describes the database schemas.
 
----
-
-## 🛠 Technologies Used
-
-| Component            | Technology Used |
-|----------------------|----------------|
-| **Blockchain Ledger** | Hyperledger Indy |
-| **Database**        | PostgreSQL |
-| **Encryption**      | OpenSSL |
-| **Backend**        | Python (Flask/Django) |
-| **Version Control** | Git & GitHub |
-| **Dev Environment** | VS Code, Jupyter Notebook |
-
----
 
 ## ✅ Summary of TrustID's Data Flow
 
