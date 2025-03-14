@@ -34,7 +34,6 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 
 ---
 
-To add icons and colors to the README, you can use Markdown with emojis and inline HTML for styling. Here's an updated version of your project structure with icons and some color highlights:
 
 ```markdown
 # TrustID Data Engineering
@@ -81,6 +80,80 @@ To add icons and colors to the README, you can use Markdown with emojis and inli
 │  
 ├── `requirements.txt` 📑 # Python dependencies  
 ├── `README.md` 📖 # Project documentation  
+
+
+
+# TrustID Data Engineering
+
+## Folder Descriptions
+
+### 1. `data_ingestion/` 🛠️  
+Receives **already verified** data from the backend after user credentials are validated.
+
+- `receive_verified_data.py` ⚙️: Accepts verified user identity data.
+- `receive_verified_credentials.py` 🔑: Stores validated credentials (license, certificates, ID cards, etc.).
+
+### 2. `data_processing/` 🧹  
+Handles cleaning, transforming, and encrypting **only verified** data before storage.
+
+- `clean_data.py` 🧼: Standardizes and removes inconsistencies.
+- `transform_data.py` 🔄: Maps data into appropriate formats for structured storage.
+- `encrypt_data.py` 🔒: Uses OpenSSL encryption before storing sensitive credentials.
+
+### 3. `storage/` 💾  
+Stores processed data in a **secure, structured manner** using PostgreSQL and Hyperledger Indy.
+
+- `postgres_models.py` 🗄️: Defines PostgreSQL tables for structured storage.
+- `indy_ledger.py` 📚: Manages interactions with Hyperledger Indy for storing verifiable credentials.
+- `openssl_keys.py` 🔑: Handles cryptographic key storage and encryption.
+
+### 4. `integration/` 🔗  
+Manages communication between the data pipeline and external services.
+
+- `api_connector.py` 🌐: Connects with the backend to receive verified data.
+- `indy_connector.py` 🌍: Handles interactions with Hyperledger Indy for credential verification.
+
+### 5. `config/` ⚙️  
+Stores all configuration settings related to database, encryption, and system parameters.
+
+- `settings.py` 🛠️: Contains global configuration parameters.
+- `database.py` 🗄️: Manages PostgreSQL database connections and settings.
+
+### 6. `scripts/` 📜  
+Contains helper scripts for **initializing** the database and blockchain ledger.
+
+- `setup_db.py` ⚙️: Initializes PostgreSQL database tables.
+- `setup_indy.py` 📜: Configures schemas in Hyperledger Indy.
+
+### 7. `tests/` 🔬  
+Ensures that all data pipelines function correctly.
+
+- `test_data_pipeline.py` ✅: Tests ingestion, processing, and storage components.
+
+## Data Workflow Summary
+
+1. **User Submission & Verification (Backend Responsibility)**  
+   Users **either upload documents or manually enter credentials** (license, certificate, national ID, etc.).  
+   Backend **extracts data** from uploaded documents.  
+   Backend **verifies credentials** with external sources before sending them to storage.
+
+2. **Data Ingestion**  
+   Once credentials are verified, the **backend sends validated data** to the data pipeline.  
+   The **data_ingestion** module receives and prepares the data for processing.
+
+3. **Data Processing & Security**  
+   Verified data is **cleaned, transformed, and encrypted** before storage.
+
+4. **Storage & Blockchain Integration**  
+   **PostgreSQL stores structured user credentials.**  
+   **Hyperledger Indy stores decentralized verifiable credentials.**
+
+5. **Integration & Retrieval**  
+   Organizations or users can retrieve credentials via APIs or blockchain queries.  
+   **Integration module ensures smooth data exchange between the backend and storage layers.**
+
+This approach ensures a **secure, scalable, and reliable** system where only **verified** credentials are stored, maintaining trust and data integrity. 🚀
+
 ```
 
 
