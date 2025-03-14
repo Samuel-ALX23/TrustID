@@ -170,6 +170,7 @@ Ensure you have the following installed on your system:
 ### 1. Create a Virtual Environment
 It's highly recommended to create a virtual environment to manage your project dependencies.
 
+
 ```bash
 python3 -m venv trustid-env
 source trustid-env/bin/activate  # Activate the virtual environment
@@ -184,3 +185,4 @@ pip install requests              # For making HTTP requests (e.g., integration 
 pip install python-dotenv         # For loading environment variables from .env files
 pip install openSSL               # OpenSSL bindings for Python (if needed for encryption)
 pip install pytest                # For testing your code
+```
