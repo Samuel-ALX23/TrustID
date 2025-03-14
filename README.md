@@ -1,5 +1,137 @@
 # 🚀 TrustID: Blockchain-Powered Digital Identity Verification
 
+```mermaid
+flowchart TB
+    %% Users & Organizations
+    subgraph Users["Users & Organizations"]
+      User["👤 User"]
+      Verifier["🏢 Organization (Verifier)"]
+    end
+
+    %% TrustID Frontend
+    subgraph Frontend["🖥️ TrustID Frontend"]
+      UI["🎨 User Interface"]
+      VerifierUI["🔍 Verifier Interface"]
+    end
+
+    %% Data Engineering Pipeline
+    subgraph DataPipeline["⚙️ TrustID Data Engineering Pipeline"]
+      
+      subgraph Ingestion["🟢 Data Ingestion"]
+        API["📡 API Ingestion"]
+        File["📂 File Ingestion"]
+        BlockListener["🔗 Blockchain Listener"]
+        Scheduler["⏰ Scheduler"]
+      end
+
+      subgraph Processing["🔵 Data Processing"]
+        Transform["🔄 Transformations"]
+        Identity["🆔 Identity Resolution"]
+      end
+
+      subgraph Security["🔴 Security Layer"]
+        Encrypt["🔐 Encryption"]
+        KeyMgr["🗝️ Key Manager"]
+      end
+
+      subgraph Storage["🟡 Storage Layer"]
+        StorageMgr["📦 Storage Manager"]
+      end
+
+      subgraph Integration["🔷 System Integration"]
+        DataAPI["🔗 Data API"]
+        Notifier["📢 Event Notifier"]
+        Kafka["💬 Kafka Connector"]
+      end
+
+      subgraph Logging["📜 Logging System"]
+        Logger["📝 Logger"]
+        EventLog["📑 Event Logs"]
+      end
+
+      subgraph Config["⚙️ Configuration"]
+        Settings["🔧 settings.yaml"]
+        Env["📁 .env"]
+      end
+    end
+
+    %% Databases
+    subgraph Databases["💾 Data Storage"]
+      Postgres[("🗄️ PostgreSQL")]
+      Hyperledger[("🔗 Hyperledger Indy")]
+    end
+
+    %% User flows
+    User -->|Registers/Logs in| UI
+    User -->|Submits credentials| UI
+    UI -->|User data| API
+    UI -->|File uploads| File
+    
+    %% Ingestion flows
+    API --> Transform
+    File --> Transform
+    BlockListener -->|Monitors blockchain| Hyperledger
+    Scheduler -->|Triggers| API
+    Scheduler -->|Triggers| BlockListener
+
+    %% Processing flows
+    Transform --> Identity
+    Identity --> Encrypt
+
+    %% Security flows
+    Encrypt -->|Uses| KeyMgr
+    Encrypt --> StorageMgr
+
+    %% Storage flows
+    StorageMgr -->|Stores user data| Postgres
+    StorageMgr -->|Stores verified credentials| Hyperledger
+
+    %% Integration flows
+    DataAPI -->|Reads from| StorageMgr
+    UI -->|Requests data| DataAPI
+    Hyperledger -->|Events| Notifier
+    Notifier -->|Notifies| UI
+    Hyperledger -->|Events| Kafka
+
+    %% Verification flows
+    Verifier -->|Accesses| VerifierUI
+    VerifierUI -->|Verifies credentials| DataAPI
+    DataAPI -->|Verifies with| Hyperledger
+
+    %% Logging flows
+    Logger -->|Records all system activities| EventLog
+    API -->|Logs| Logger
+    Transform -->|Logs| Logger
+    StorageMgr -->|Logs| Logger
+
+    %% Config flows
+    Config -->|Configures| DataPipeline
+    
+    %% Styling (GitHub only supports basic Mermaid, so colors may be limited)
+    classDef frontend fill:#6495ED,stroke:#333,stroke-width:2px
+    classDef ingestion fill:#98FB98,stroke:#333,stroke-width:1px
+    classDef processing fill:#FFDAB9,stroke:#333,stroke-width:1px
+    classDef security fill:#FF6347,stroke:#333,stroke-width:1px
+    classDef storage fill:#FFD700,stroke:#333,stroke-width:1px
+    classDef integration fill:#87CEFA,stroke:#333,stroke-width:1px
+    classDef logging fill:#F5DEB3,stroke:#333,stroke-width:1px
+    classDef config fill:#D3D3D3,stroke:#333,stroke-width:1px
+    classDef database fill:#FFAA00,stroke:#333,stroke-width:2px
+    classDef users fill:#FFA07A,stroke:#333,stroke-width:2px
+
+    class UI,VerifierUI frontend
+    class API,File,BlockListener,Scheduler ingestion
+    class Transform,Identity processing
+    class Encrypt,KeyMgr security
+    class StorageMgr storage
+    class DataAPI,Notifier,Kafka integration
+    class Logger,EventLog logging
+    class Settings,Env config
+    class Postgres,Hyperledger database
+    class User,Verifier users
+```
+
+
 TrustID is a blockchain-powered digital identity verification system that ensures secure, tamper-proof, and verifiable credentials. Built on **Hyperledger Indy** and **PostgreSQL**, TrustID allows users to manage and share their credentials (e.g., National ID, Passports, Degrees) with organizations in a privacy-preserving, decentralized way.
 
 ## 🔹 Key Features
