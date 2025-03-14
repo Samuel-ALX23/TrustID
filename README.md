@@ -164,11 +164,17 @@ Ensure you have the following installed on your system:
 It's highly recommended to create a virtual environment to manage your project dependencies.
 
 `python3 -m venv trustid-env`
+
+
 `source trustid-env/bin/activate`  # Activate the virtual environment
+
+
 `Install Required Python Packages`
 
 ## Once inside your virtual environment, install the required dependencies for the project.
 
+```
+```
 `pip install sqlalchemy`           # ORM for interacting with PostgreSQL
 `pip install psycopg2-binary`      # PostgreSQL adapter for SQLAlchemy
 `pip install indy-sdk`              # Hyperledger Indy SDK for interacting with Indy Ledger
@@ -177,7 +183,6 @@ It's highly recommended to create a virtual environment to manage your project d
 `pip install python-dotenv`        # For loading environment variables from .env files
 `pip install openSSL`            # OpenSSL bindings for Python (if needed for encryption)
 `pip install pytest`               # For testing your code
-```
 
 
 
