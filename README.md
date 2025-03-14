@@ -31,7 +31,6 @@ TrustID is a blockchain-powered digital identity verification system that ensure
 ## 📌 Our Mission
 To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
 
-```markdown
 
 ## Project Structure
 
@@ -77,7 +76,7 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 ├── `README.md` 📖 # Project documentation  
 
 
-
+```
 # TrustID Data Engineering
 
 ## Folder Descriptions
@@ -150,7 +149,7 @@ Ensures that all data pipelines function correctly.
 This approach ensures a **secure, scalable, and reliable** system where only **verified** credentials are stored, maintaining trust and data integrity. 🚀
 
 ```
-
+```
 # Project Setup Guide
 
 ## Prerequisites
@@ -163,19 +162,22 @@ Ensure you have the following installed on your system:
 
 ### 1. Create a Virtual Environment
 It's highly recommended to create a virtual environment to manage your project dependencies.
-~~~
 
-python3 -m venv trustid-env
-source trustid-env/bin/activate  # Activate the virtual environment
-Install Required Python Packages
-Once inside your virtual environment, install the required dependencies for the project.
+`python3 -m venv trustid-env`
+`source trustid-env/bin/activate`  # Activate the virtual environment
+`Install Required Python Packages`
 
-pip install sqlalchemy            # ORM for interacting with PostgreSQL
-pip install psycopg2-binary       # PostgreSQL adapter for SQLAlchemy
-pip install indy-sdk              # Hyperledger Indy SDK for interacting with Indy Ledger
-pip install cryptography          # For encryption and decryption tasks
-pip install requests              # For making HTTP requests (e.g., integration with backend)
-pip install python-dotenv         # For loading environment variables from .env files
-pip install openSSL               # OpenSSL bindings for Python (if needed for encryption)
-pip install pytest                # For testing your code
+## Once inside your virtual environment, install the required dependencies for the project.
+
+`pip install sqlalchemy`           # ORM for interacting with PostgreSQL
+`pip install psycopg2-binary`      # PostgreSQL adapter for SQLAlchemy
+`pip install indy-sdk`              # Hyperledger Indy SDK for interacting with Indy Ledger
+`pip install cryptography`         # For encryption and decryption tasks
+`pip install requests`              # For making HTTP requests (e.g., integration with backend)
+`pip install python-dotenv`        # For loading environment variables from .env files
+`pip install openSSL`            # OpenSSL bindings for Python (if needed for encryption)
+`pip install pytest`               # For testing your code
+```
+
+
 
