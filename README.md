@@ -83,47 +83,49 @@ To add icons and colors to the README, you can use Markdown with emojis and inli
 ├── `README.md` 📖 # Project documentation  
 ```
 
-# Folder Descriptions
 
-## 1. `data_ingestion/` 🛠️
+
+## Folder Descriptions
+
+### 1. `data_ingestion/` 🛠️
 Receives **already verified** data from the backend after user credentials are validated.
 
 - `receive_verified_data.py` ⚙️: Accepts verified user identity data.
 - `receive_verified_credentials.py` 🔑: Stores validated credentials (license, certificates, ID cards, etc.).
 
-## 2. `data_processing/` 🧹
+### 2. `data_processing/` 🧹
 Handles cleaning, transforming, and encrypting **only verified** data before storage.
 
 - `clean_data.py` 🧼: Standardizes and removes inconsistencies.
 - `transform_data.py` 🔄: Maps data into appropriate formats for structured storage.
 - `encrypt_data.py` 🔒: Uses OpenSSL encryption before storing sensitive credentials.
 
-## 3. `storage/` 💾
+### 3. `storage/` 💾
 Stores processed data in a **secure, structured manner** using PostgreSQL and Hyperledger Indy.
 
 - `postgres_models.py` 🗄️: Defines PostgreSQL tables for structured storage.
 - `indy_ledger.py` 📚: Manages interactions with Hyperledger Indy for storing verifiable credentials.
 - `openssl_keys.py` 🔑: Handles cryptographic key storage and encryption.
 
-## 4. `integration/` 🔗
+### 4. `integration/` 🔗
 Manages communication between the data pipeline and external services.
 
 - `api_connector.py` 🌐: Connects with the backend to receive verified data.
 - `indy_connector.py` 🌍: Handles interactions with Hyperledger Indy for credential verification.
 
-## 5. `config/` ⚙️
+### 5. `config/` ⚙️
 Stores all configuration settings related to database, encryption, and system parameters.
 
 - `settings.py` 🛠️: Contains global configuration parameters.
 - `database.py` 🗄️: Manages PostgreSQL database connections and settings.
 
-## 6. `scripts/` 📜
+### 6. `scripts/` 📜
 Contains helper scripts for **initializing** the database and blockchain ledger.
 
 - `setup_db.py` ⚙️: Initializes PostgreSQL database tables.
 - `setup_indy.py` 📜: Configures schemas in Hyperledger Indy.
 
-## 7. `tests/` 🔬
+### 7. `tests/` 🔬
 Ensures that all data pipelines function correctly.
 
 - `test_data_pipeline.py` ✅: Tests ingestion, processing, and storage components.
@@ -151,7 +153,6 @@ Ensures that all data pipelines function correctly.
    **Integration module ensures smooth data exchange between the backend and storage layers.**
 
 This approach ensures a **secure, scalable, and reliable** system where only **verified** credentials are stored, maintaining trust and data integrity. 🚀
-```
 
 
 
