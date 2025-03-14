@@ -9,11 +9,10 @@ TrustID is a blockchain-powered digital identity verification system that ensure
 - ✅ **Revocation Registry** to track and prevent fraudulent credentials
 - ✅ **Seamless Integration** for organizations to verify credentials in real-time
 
----
 
-## 🔗 Technologies Used
+## 🛠 Technologies Used
 
-- | Component            | Technology Used |
+| Component            | Technology Used |
 |----------------------|----------------|
 | **Blockchain Ledger** | Hyperledger Indy  → Decentralized Identity Ledger |
 | **Database**        | PostgreSQL → User & Credential Storage |
@@ -24,7 +23,6 @@ TrustID is a blockchain-powered digital identity verification system that ensure
 | **scripting** | Python|
 
 ---
-
 
 
 ## 📌 Our Mission
