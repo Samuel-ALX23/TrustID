@@ -31,11 +31,6 @@ TrustID is a blockchain-powered digital identity verification system that ensure
 ## 📌 Our Mission
 To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
 
-
-
----
-
-
 ```markdown
 
 ## Project Structure
@@ -156,7 +151,6 @@ This approach ensures a **secure, scalable, and reliable** system where only **v
 
 ```
 
-```
 # Project Setup Guide
 
 ## Prerequisites
@@ -184,4 +178,4 @@ pip install requests              # For making HTTP requests (e.g., integration 
 pip install python-dotenv         # For loading environment variables from .env files
 pip install openSSL               # OpenSSL bindings for Python (if needed for encryption)
 pip install pytest                # For testing your code
-```
+
