@@ -1,5 +1,92 @@
 # 🚀 TrustID: Blockchain-Powered Digital Identity Verification
 
+```mermaid
+flowchart TB
+
+    %% Users and Frontend
+    subgraph Users["Users & Organizations"]
+      User["User"]:::user
+      Verifier["Organization (Verifier)"]:::user
+    end
+
+    subgraph Frontend["TrustID Frontend"]
+      UI["User Interface"]:::frontend
+      VerifierUI["Verifier Interface"]:::frontend
+    end
+
+    %% Data Engineering Pipeline
+    subgraph DataPipeline["TrustID-DataEngineering Pipeline"]
+      
+      subgraph Ingestion["Data Ingestion"]
+        API["API Ingestion"]:::ingestion
+        File["File Upload Ingestion"]:::ingestion
+        BlockListener["Blockchain Listener"]:::ingestion
+      end
+
+      subgraph Processing["Data Processing"]
+        Transform["Data Transformations"]:::processing
+        Identity["Identity Resolution"]:::processing
+        Encrypt["Data Encryption"]:::security
+      end
+
+      subgraph Storage["Storage & Security"]
+        StorageMgr["Storage Manager"]:::storage
+        SecurityMgr["Security Manager"]:::security
+      end
+
+      subgraph Integration["System Integration"]
+        DataAPI["Data API"]:::integration
+        Notifier["Event Notifier"]:::integration
+      end
+
+      subgraph Logging["Logging System"]
+        Logger["Logger"]:::logging
+      end
+    end
+
+    %% Databases
+    subgraph Databases["Data Storage"]
+      Postgres[(PostgreSQL)]:::database
+      Hyperledger[("Hyperledger Indy")]:::database
+    end
+
+    %% User interactions
+    User -->|Registers & Uploads| UI
+    UI -->|Sends Data| API & File
+    UI -->|Requests Data| DataAPI
+    Verifier -->|Verifies| VerifierUI
+    VerifierUI -->|Checks| DataAPI
+
+    %% Data Pipeline Flow
+    API & File --> Transform
+    Transform --> Identity
+    Identity --> Encrypt
+    Encrypt --> StorageMgr
+    StorageMgr -->|Stores in| Postgres & Hyperledger
+    BlockListener -->|Monitors| Hyperledger
+
+    %% Integration & Notifications
+    Hyperledger -->|Updates| Notifier
+    Notifier -->|Sends| UI
+    DataAPI -->|Reads from| StorageMgr
+
+    %% Logging
+    API & Transform & StorageMgr -->|Logs to| Logger
+
+    %% Custom Styling
+    classDef user fill:#FF6347,stroke:#333,stroke-width:2px,color:#fff;
+    classDef frontend fill:#4682B4,stroke:#333,stroke-width:2px,color:#fff;
+    classDef ingestion fill:#32CD32,stroke:#333,stroke-width:2px,color:#fff;
+    classDef processing fill:#FFD700,stroke:#333,stroke-width:2px,color:#333;
+    classDef security fill:#DC143C,stroke:#333,stroke-width:2px,color:#fff;
+    classDef storage fill:#8A2BE2,stroke:#333,stroke-width:2px,color:#fff;
+    classDef integration fill:#1E90FF,stroke:#333,stroke-width:2px,color:#fff;
+    classDef logging fill:#D2691E,stroke:#333,stroke-width:2px,color:#fff;
+    classDef database fill:#FF4500,stroke:#333,stroke-width:2px,color:#fff;
+
+```
+
+
 TrustID is a blockchain-powered digital identity verification system that ensures secure, tamper-proof, and verifiable credentials. Built on **Hyperledger Indy** and **PostgreSQL**, TrustID allows users to manage and share their credentials (e.g., National ID, Passports, Degrees) with organizations in a privacy-preserving, decentralized way.
 
 ## 🔹 Key Features
