@@ -71,7 +71,11 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 ├── **tests/** 🔬  
 │   ├── `test_data_pipeline.py` ✅ # Tests for ingestion & processing  
 │   ├── `__init__.py`  
-│  
+│── docker/
+│   ├── Dockerfile  # Defines Docker container setup
+│   ├── docker-compose.yml  # Multi-container setup for API, PostgreSQL, and Indy Ledger
+│   ├── .dockerignore  # Files to exclude from Docker builds
+│
 ├── `requirements.txt` 📑 # Python dependencies  
 ├── `README.md` 📖 # Project documentation  
 
