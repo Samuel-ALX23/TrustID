@@ -40,8 +40,7 @@ async def receive_data(endpoint: str, api_key: str):
         logger.error(f"API request failed: {e}")
         raise
 receive_verified_credentials.py
-python
-Copy
+
 import logging
 from pydantic import BaseModel, ValidationError
 import requests
@@ -77,8 +76,7 @@ async def receive_credentials(endpoint: str, api_key: str):
         raise
 🔄 data_processing/
 clean_data.py
-python
-Copy
+
 import re
 from datetime import datetime
 import logging
@@ -121,9 +119,9 @@ class DataCleaner:
             logger.error(f"Invalid phone number: {phone}", extra={"input": phone})
             raise ValueError("Invalid phone number: must be 8-15 digits, optionally starting with +")
         return cleaned
+	    
 transform_data.py
-python
-Copy
+
 from uuid import uuid4
 from datetime import datetime
 from storage import postgres_models
@@ -209,10 +207,10 @@ class DataEncryptor:
         except Exception as e:
             logger.error(f"Decryption failed: {e}", extra={"error": str(e)})
             raise
+		
 🗄️ storage/
 postgres_models.py
-python
-Copy
+
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
 from typing import List, Optional
@@ -289,15 +287,10 @@ class EncryptionKey(SQLModel, table=True):
     private_key: str = Field(encrypted=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     user: Optional[User] = Relationship(back_populates="encryption_keys")
-This is the updated code for the data_ingestion, data_processing, and storage folders. Let me know if you'd like me to continue with the remaining folders (integration, config, scripts, tests, docker, etc.)!
-
-yes, do alll, everything, improved one
-Below is the complete updated and improved code for all folders in the TrustID project, incorporating scalability, security, compliance, and automation enhancements. Each folder and file is updated to align with the project's requirements and industry best practices.
 
 🔗 integration/
 backend_api.py
-python
-Copy
+
 import logging
 import requests
 from tenacity import retry, stop_after_attempt, wait_fixed
@@ -340,8 +333,7 @@ class BackendAPI:
             logger.error(f"Failed to fetch credential data: {e}")
             return None
 indy_api.py
-python
-Copy
+
 import logging
 from indy import ledger, wallet
 import asyncio
@@ -376,8 +368,7 @@ class IndyAPI:
             logger.error(f"Credential issuance failed: {e}")
             return None
 analytics_api.py
-python
-Copy
+
 import logging
 from typing import Dict, List
 from storage import postgres_models
@@ -413,8 +404,7 @@ class AnalyticsAPI:
             return {}
 ⚙️ config/
 settings.py
-python
-Copy
+
 import os
 from dotenv import load_dotenv
 
@@ -442,8 +432,7 @@ def get_session():
         yield session
 📜 scripts/
 setup_db.py
-python
-Copy
+
 from sqlmodel import SQLModel, create_engine
 from config.settings import settings
 from storage import postgres_models
@@ -472,10 +461,10 @@ async def initialize_indy():
 
 if __name__ == "__main__":
     asyncio.run(initialize_indy())
+	
 🧪 tests/
 test_data_pipeline.py
-python
-Copy
+
 import pytest
 from data_ingestion.receive_verified_data import receive_data
 from data_processing.clean_data import DataCleaner
@@ -507,8 +496,7 @@ async def test_data_pipeline():
     assert user.user_id is not None
 🐳 docker/
 Dockerfile
-dockerfile
-Copy
+
 FROM python:3.9-slim
 
 WORKDIR /app
@@ -569,8 +557,7 @@ test:
 	docker-compose run app pytest
 🔄 high_availability/
 postgres_replication_setup.py
-python
-Copy
+
 import logging
 from sqlmodel import create_engine
 from config.settings import settings
@@ -585,8 +572,7 @@ def setup_replication():
     except Exception as e:
         logger.error(f"Failed to setup replication: {e}")
 redis_cache.py
-python
-Copy
+
 import redis
 import logging
 from config.settings import settings
@@ -613,8 +599,7 @@ class RedisCache:
             return False
 🔧 ci_cd/
 github_actions.yml
-yaml
-Copy
+
 name: CI/CD Pipeline
 
 on:
