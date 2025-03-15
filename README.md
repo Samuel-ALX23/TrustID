@@ -34,54 +34,73 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 
 ## Project Structure
 
-📂 **trustid_data_engineering/**
+# 📌 TrustID Data Engineering
+
+## 🏗️ Project Overview
+**TrustID** is a robust, scalable, and secure data engineering pipeline designed for verified identity and credential processing. This system ensures efficient data ingestion, processing, storage, and integration with high availability and CI/CD automation.
+
+---
+
+## 📂 Project Structure
 ```
-├── **data_ingestion/** 🛠️  
-│   ├── `receive_verified_data.py` ⚙️ # Accepts verified user data from backend  
-│   ├── `receive_verified_credentials.py` 🔑 # Stores verified credentials  
-│   ├── `__init__.py`  
-│  
-├── **data_processing/** 🧹  
-│   ├── `clean_data.py` 🧼 # Cleans and formats data  
-│   ├── `transform_data.py` 🔄 # Maps data to appropriate models  
-│   ├── `encrypt_data.py` 🔒 # Handles OpenSSL encryption  
-│   ├── `__init__.py`  
-│  
-├── **storage/** 💾  
-│   ├── `postgres_models.py` 🗄️ # PostgreSQL table definitions  
-│   ├── `indy_ledger.py` 📚 # Functions to interact with Hyperledger Indy  
-│   ├── `openssl_keys.py` 🔑 # Manages encryption keys  
-│   ├── `__init__.py`  
-│  
-├── **integration/** 🔗  
-│   ├── `api_connector.py` 🌐 # Connects to backend API  
-│   ├── `indy_connector.py` 🌍 # Connects to Hyperledger Indy  
-│   ├── `__init__.py`  
-│  
-├── **config/** ⚙️  
-│   ├── `settings.py` 🛠️ # Configuration settings  
-│   ├── `database.py` 🗄️ # PostgreSQL connection  
-│   ├── `__init__.py`  
-│  
-├── **scripts/** 📜  
-│   ├── `setup_db.py` ⚙️ # Initializes PostgreSQL tables  
-│   ├── `setup_indy.py` 📜 # Initializes Indy Ledger schemas  
-│   ├── `__init__.py`  
-│  
-├── **tests/** 🔬  
-│   ├── `test_data_pipeline.py` ✅ # Tests for ingestion & processing  
-│   ├── `__init__.py`  
-│── docker/
-│   ├── Dockerfile  # Defines Docker container setup
-│   ├── docker-compose.yml  # Multi-container setup for API, PostgreSQL, and Indy Ledger
-│   ├── .dockerignore  # Files to exclude from Docker builds
-|   ├── .Makefile      # This simplies docker commands
+📦 TrustID Data Engineering
+├── 📥 data_ingestion/                # Handles data intake from users and documents
+│   ├── 📂 user_data/
+│   │   ├── 📜 receive_verified_data.py       # Ingests and validates user identity data
+│   ├── 📂 document_data/
+│   │   ├── 📜 receive_verified_credentials.py # Ingests verified documents and credentials
 │
-├── `requirements.txt` 📑 # Python dependencies  
-├── `README.md` 📖 # Project documentation  
-
-
+├── 🔄 data_processing/              # Cleans, transforms, and encrypts identity & credential data
+│   ├── 🧹 clean_identity_data.py        # Cleanses user identity data
+│   ├── 🧹 clean_credential_data.py       # Cleanses document credential data
+│   ├── 🔄 transform_identity_data.py     # Transforms structured user data
+│   ├── 🔄 transform_credential_data.py   # Transforms structured credential data
+│   ├── 🔐 encrypt_data.py                # Encrypts data before storage
+│
+├── 🗄️ storage/                      # Handles database and secure storage
+│   ├── 🛢️ postgres_models.py           # Defines PostgreSQL models for structured storage
+│   ├── 📜 indy_write.py                # Writes data to Hyperledger Indy blockchain
+│   ├── 📜 indy_read.py                 # Reads data from Hyperledger Indy
+│   ├── 🔑 openssl_keys.py              # Manages OpenSSL keys for encryption
+│
+├── 🔗 integration/                   # Interfaces with external systems
+│   ├── 🌐 backend_api.py              # Connects with TrustID backend
+│   ├── 🔗 indy_api.py                 # Integrates with Hyperledger Indy
+│   ├── 📊 analytics_api.py            # Provides analytics and insights
+│
+├── ⚙️ config/                        # Stores configuration files
+│   ├── ⚙️ settings.py                 # Global application settings
+│   ├── 🛢️ database.py                 # Database connection settings
+│
+├── 📜 scripts/                       # Utility scripts for setup
+│   ├── 🛠️ setup_db.py                 # Initializes PostgreSQL database
+│   ├── 🔗 setup_indy.py               # Sets up Indy ledger environment
+│
+├── 🧪 tests/                         # Unit and integration tests
+│   ├── ✅ test_data_pipeline.py       # Tests the entire data pipeline
+│
+├── 🐳 docker/                        # Containerization setup
+│   ├── 🐳 Dockerfile                   # Docker image configuration
+│   ├── 🔧 docker-compose.yml          # Multi-container orchestration
+│   ├── 🚫 .dockerignore               # Excludes files from Docker builds
+│   ├── 📜 Makefile                    # Automates build commands
+│
+├── 🔄 high_availability/             # Ensures fault tolerance & caching
+│   ├── 🔁 postgres_replication_setup.py # Sets up PostgreSQL replication
+│   ├── ⚡ redis_cache.py              # Implements Redis caching for performance
+│
+├── 🔧 ci_cd/                         # Continuous Integration & Deployment
+│   ├── 🛠️ github_actions.yml          # Automates GitHub CI/CD workflows
+│   ├── 🛠️ gitlab_ci.yml               # Automates GitLab CI/CD workflows
+│   ├── 📜 docker_auto_build.sh        # Automates Docker image builds
+│
+├── 📜 requirements.txt                # List of dependencies
+├── 📖 README.md                       # Documentation
 ```
+
+---
+
+
 # TrustID Data Engineering
 
 ## Folder Descriptions
