@@ -157,8 +157,6 @@ Manages Continuous Integration & Deployment for automation.
 ### 📜 requirements.txt  
 Lists all dependencies required for the project.
 
-### 📖 README.md  
-Project documentation and usage guidelines.  
 
 
 
