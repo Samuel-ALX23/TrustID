@@ -75,6 +75,7 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 │   ├── Dockerfile  # Defines Docker container setup
 │   ├── docker-compose.yml  # Multi-container setup for API, PostgreSQL, and Indy Ledger
 │   ├── .dockerignore  # Files to exclude from Docker builds
+|   ├── .Makefile      # This simplies docker commands
 │
 ├── `requirements.txt` 📑 # Python dependencies  
 ├── `README.md` 📖 # Project documentation  
