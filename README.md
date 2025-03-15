@@ -31,14 +31,6 @@ TrustID is a blockchain-powered digital identity verification system that ensure
 ## 📌 Our Mission
 To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
 
-
-## Project Structure
-
-# 📌 TrustID Data Engineering
-
-## 🏗️ Project Overview
-**TrustID** is a robust, scalable, and secure data engineering pipeline designed for verified identity and credential processing. This system ensures efficient data ingestion, processing, storage, and integration with high availability and CI/CD automation.
-
 ---
 
 ## 📂 Project Structure
@@ -100,53 +92,75 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 
 ---
 
+## Folder Structure & Explanations
 
-# TrustID Data Engineering
+### 📥 data_ingestion/  
+Handles data intake from users and documents after verification. This ensures that only validated data enters the pipeline.  
+- **📂 user_data/** - Processes verified user identity data.  
+  - **📜 receive_verified_data.py** ⚙️: Ingests and validates user identity data.  
+- **📂 document_data/** - Handles verified documents and credentials.  
+  - **📜 receive_verified_credentials.py** 🔑: Stores validated credentials (licenses, certificates, ID cards, etc.).  
 
-## Folder Descriptions
+### 🔄 data_processing/  
+Cleans, transforms, and encrypts only verified data before storage. This ensures data consistency, security, and integrity.  
+- **🧹 clean_identity_data.py** 🧼: Cleanses user identity data, standardizing formats and removing inconsistencies.  
+- **🧹 clean_credential_data.py** 🧼: Cleanses document credential data for structured storage.  
+- **🔄 transform_identity_data.py** 🔄: Maps and structures identity data into a usable format.  
+- **🔄 transform_credential_data.py** 🔄: Structures credential-related data before storage.  
+- **🔐 encrypt_data.py** 🔒: Uses OpenSSL encryption to secure sensitive credentials before storage.  
 
-### 1. `data_ingestion/` 🛠️  
-Receives **already verified** data from the backend after user credentials are validated.
+### 🗄️ storage/  
+Handles secure and structured data storage in PostgreSQL and Hyperledger Indy.  
+- **🛢️ postgres_models.py** 🗄️: Defines PostgreSQL tables for structured data storage.  
+- **📜 indy_write.py** 📚: Writes verifiable credentials to Hyperledger Indy.  
+- **📜 indy_read.py** 📚: Reads and retrieves data from Hyperledger Indy.  
+- **🔑 openssl_keys.py** 🔑: Manages cryptographic key storage and encryption.  
 
-- `receive_verified_data.py` ⚙️: Accepts verified user identity data.
-- `receive_verified_credentials.py` 🔑: Stores validated credentials (license, certificates, ID cards, etc.).
+### 🔗 integration/  
+Facilitates communication between the data pipeline and external systems, including APIs and blockchain.  
+- **🌐 backend_api.py** 🌎: Connects with the TrustID backend to receive verified data.  
+- **🔗 indy_api.py** 🔄: Handles interactions with Hyperledger Indy for credential verification.  
+- **📊 analytics_api.py** 📈: Provides data insights and analytics.  
 
-### 2. `data_processing/` 🧹  
-Handles cleaning, transforming, and encrypting **only verified** data before storage.
+### ⚙️ config/  
+Contains all configuration settings related to databases, encryption, and system parameters.  
+- **⚙️ settings.py** 🛠️: Stores global configuration parameters.  
+- **🛢️ database.py** 🗄️: Manages PostgreSQL database connections and settings.  
 
-- `clean_data.py` 🧼: Standardizes and removes inconsistencies.
-- `transform_data.py` 🔄: Maps data into appropriate formats for structured storage.
-- `encrypt_data.py` 🔒: Uses OpenSSL encryption before storing sensitive credentials.
+### 📜 scripts/  
+Helper scripts for initializing the database and blockchain ledger.  
+- **🛠️ setup_db.py** ⚙️: Initializes PostgreSQL database tables.  
+- **🔗 setup_indy.py** 📜: Configures schemas in Hyperledger Indy.  
 
-### 3. `storage/` 💾  
-Stores processed data in a **secure, structured manner** using PostgreSQL and Hyperledger Indy.
+### 🧪 tests/  
+Ensures that all data pipelines function correctly.  
+- **✅ test_data_pipeline.py** 🔬: Tests ingestion, processing, and storage components.  
 
-- `postgres_models.py` 🗄️: Defines PostgreSQL tables for structured storage.
-- `indy_ledger.py` 📚: Manages interactions with Hyperledger Indy for storing verifiable credentials.
-- `openssl_keys.py` 🔑: Handles cryptographic key storage and encryption.
+### 🐳 docker/  
+Contains files for containerization and orchestration.  
+- **🐳 Dockerfile** 🏗️: Configures Docker container image.  
+- **🔧 docker-compose.yml** ⚙️: Defines multi-container setup for the project.  
+- **🚫 .dockerignore** 🚧: Specifies files to exclude from Docker builds.  
+- **📜 Makefile** 📋: Automates build and deployment commands.  
 
-### 4. `integration/` 🔗  
-Manages communication between the data pipeline and external services.
+### 🔄 high_availability/  
+Ensures system reliability, fault tolerance, and caching for performance optimization.  
+- **🔁 postgres_replication_setup.py** 🛢️: Sets up PostgreSQL replication for high availability.  
+- **⚡ redis_cache.py** ⚡: Implements Redis caching to enhance data retrieval speed.  
 
-- `api_connector.py` 🌐: Connects with the backend to receive verified data.
-- `indy_connector.py` 🌍: Handles interactions with Hyperledger Indy for credential verification.
+### 🔧 ci_cd/  
+Manages Continuous Integration & Deployment for automation.  
+- **🛠️ github_actions.yml** 🏗️: Defines GitHub workflows for CI/CD automation.  
+- **🛠️ gitlab_ci.yml** 🏗️: Defines GitLab pipelines for CI/CD integration.  
+- **📜 docker_auto_build.sh** 🔄: Automates Docker image builds for deployment.  
 
-### 5. `config/` ⚙️  
-Stores all configuration settings related to database, encryption, and system parameters.
+### 📜 requirements.txt  
+Lists all dependencies required for the project.
 
-- `settings.py` 🛠️: Contains global configuration parameters.
-- `database.py` 🗄️: Manages PostgreSQL database connections and settings.
+### 📖 README.md  
+Project documentation and usage guidelines.  
 
-### 6. `scripts/` 📜  
-Contains helper scripts for **initializing** the database and blockchain ledger.
 
-- `setup_db.py` ⚙️: Initializes PostgreSQL database tables.
-- `setup_indy.py` 📜: Configures schemas in Hyperledger Indy.
-
-### 7. `tests/` 🔬  
-Ensures that all data pipelines function correctly.
-
-- `test_data_pipeline.py` ✅: Tests ingestion, processing, and storage components.
 
 ## Data Workflow Summary
 
