@@ -1,0 +1,524 @@
+
+Data Ingestion:
+receive_verified_data.py: Take verified user data from the backend, check it’s in the right format, and keep a record of everything for tracking. Make sure it can handle lots of data smoothly.
+receive_verified_credentials.py: Process verified documents, check they match expected forms, and get them ready for the next steps, logging all actions.
+Data Processing:
+clean_data.py: Clean up user and document data, fixing formats and catching errors to keep everything consistent.
+transform_data.py: Turn cleaned data into the right shapes for storing in the database and blockchain, handling different types of credentials.
+encrypt_data.py: Lock up sensitive data by encrypting it before storing, using strong methods like OpenSSL, and manage keys safely.
+Storage:
+postgres_models.py: Set up database tables with proper links and fast search options, ensuring data is organized and quick to access.
+indy_ledger.py: Handle blockchain tasks like creating and revoking credentials, making sure it’s fast and secure.
+openssl_keys.py: Manage encryption keys securely, possibly using special hardware, and allow for key updates.
+Integration:
+api_connector.py: Connect safely with the backend, using secure methods and handling errors if something goes wrong.
+indy_connector.py: Link to the blockchain securely, ensuring smooth and reliable operations.
+analytics_api.py: Provide data insights and analytics, with secure access controls for different users.
+Config:
+settings.py: Store settings in a way that’s easy to change, like using environment variables, to keep sensitive info safe.
+database.py: Set up database connections securely, with options for better performance under heavy use.
+Scripts:
+setup_db.py: Automatically create database tables when starting up, using tools like Alembic for updates.
+setup_indy.py: Set up blockchain schemas automatically during deployment, ensuring everything is ready from the start.
+Tests:
+test_data_pipeline.py: Test everything from data entry to storage, including speed tests and security checks, using automated systems.
+Docker:
+Dockerfile: Build a light, secure container image with all needed tools.
+docker-compose.yml: Set up multiple containers for the database, blockchain, and app, with backups and health checks.
+.dockerignore: List files to exclude from containers to keep them safe and fast.
+Makefile: Make it easy to build, start, and manage containers with simple commands.
+Other Files:
+requirements.txt: List all Python tools needed, with exact versions, and keep them updated for security.
+README.md: Write clear instructions for setting up, running, and maintaining the system, including API details.
+Unexpected Detail
+
+One thing to note is that the project currently requires manual database setup, which might slow down deployment, unlike typical production systems that automate this process.
+
+Comprehensive Analysis of TrustID Project Coding Requirements for Production Readiness
+This section provides a detailed examination of the TrustID project's structure, based on the provided details and previous recommendations, to determine the coding requirements necessary for each folder and file to ensure it is fully fit for purpose in a large-scale production environment. The analysis considers scalability, security, reliability, performance, compliance, maintainability, and testing, ensuring a thorough evaluation for the data engineering team. The project, "TrustID: Blockchain-Powered Digital Identity Verification," uses Hyperledger Indy for blockchain-based identity management and PostgreSQL for data storage, with the backend team handling document uploads and verification, sending verified data to the pipeline.
+
+Project Context and Current State
+The project structure includes directories for data ingestion, processing, storage, integration, configuration, scripts, tests, and Docker setup. The provided details outline the purpose of each folder and file, such as data ingestion handling verified data, data processing cleaning and encrypting data, and storage managing PostgreSQL and Hyperledger Indy interactions. The project aims to manage user identities, issue verifiable credentials on the blockchain, and store data securely, with key features like decentralized identifiers (DIDs), verifiable credentials, and revocation registries.
+
+From previous recommendations, I identified several areas for enhancement, including scalability, security, reliability, and compliance, which need to be reflected in the coding for each file. The user clarified that the backend team handles document uploads and verification, sending data to the pipeline, which informs the data flow: backend verifies documents, sends data, and the pipeline processes and stores it in PostgreSQL and Hyperledger Indy.
+
+Analysis of Coding Requirements by Folder and File
+To make the project production-ready, I need to specify what each file should do, ensuring alignment with the identified requirements. I'll go through each folder and file, providing detailed coding tasks, ensuring no gaps are left for the user to fill.
+
+data_ingestion/
+This folder handles data intake from the backend after verification, ensuring only validated data enters the pipeline.
+
+receive_verified_data.py:
+Purpose: Ingests and validates user identity data from the backend.
+Coding Requirements:
+Implement a function to receive data via API, using requests for HTTP communication, ensuring HTTPS for security.
+Use Pydantic models for data validation, ensuring fields like first_name, last_name, email, dob, and phone_number match expected formats, with appropriate type hints.
+Handle large data volumes efficiently, using asynchronous processing with asyncio for non-blocking operations, and implement batch processing for bulk data.
+Implement logging using the logging module to record incoming data, validation results, and any errors, ensuring audit trails for compliance with regulations like GDPR.
+Include error handling for API failures, invalid data, or network issues, with appropriate retries using a library like tenacity, and fallback mechanisms to handle partial failures.
+Pass validated data to the data processing step, possibly using a message queue system like RabbitMQ for decoupling, ensuring scalability.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+import logging
+from pydantic import BaseModel, ValidationError
+import requests
+from tenacity import retry, stop_after_attempt, wait_fixed
+
+logger = logging.getLogger(__name__)
+
+class UserData(BaseModel):
+    first_name: str
+    last_name: str
+    email: str
+    dob: str
+    phone_number: str = None
+
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+def receive_data(endpoint: str, api_key: str):
+    try:
+        response = requests.get(endpoint, headers={"Authorization": f"Bearer {api_key}"}, timeout=30, verify=True)
+        response.raise_for_status()
+        data = response.json()
+        user_data = UserData(**data)
+        logger.info(f"Received valid user data: {user_data}")
+        return user_data.dict()
+    except ValidationError as e:
+        logger.error(f"Invalid data format: {e}")
+        raise
+    except requests.RequestException as e:
+        logger.error(f"API request failed: {e}")
+        raise
+receive_verified_credentials.py:
+Purpose: Ingests verified documents and credentials from the backend.
+Coding Requirements:
+Similar to receive_verified_data.py, implement a function to receive credential data, validating against expected schemas (e.g., National ID, Driver’s License) using Pydantic models.
+Extract specific attributes from credentials, mapping them to predefined schemas in Hyperledger Indy, using JSON parsing for structured data, ensuring compliance with W3C standards for verifiable claims.
+Implement logging for all operations, ensuring traceability for compliance, with structured logging for easy parsing.
+Handle edge cases, such as missing fields or malformed data, with appropriate error handling, including custom exceptions for credential-specific errors.
+Pass validated credentials to data processing for cleaning and transformation, possibly using a queue for decoupling, ensuring scalability under high load.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+import logging
+from pydantic import BaseModel, ValidationError
+import requests
+from tenacity import retry, stop_after_attempt, wait_fixed
+
+logger = logging.getLogger(__name__)
+
+class CredentialData(BaseModel):
+    credential_type: str
+    holder_name: str
+    attributes: dict
+
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+def receive_credentials(endpoint: str, api_key: str):
+    try:
+        response = requests.get(endpoint, headers={"Authorization": f"Bearer {api_key}"}, timeout=30, verify=True)
+        response.raise_for_status()
+        data = response.json()
+        cred_data = CredentialData(**data)
+        logger.info(f"Received valid credential: {cred_data}", extra={"credential_type": cred_data.credential_type})
+        return cred_data.dict()
+    except ValidationError as e:
+        logger.error(f"Invalid credential format: {e}")
+        raise
+    except requests.RequestException as e:
+        logger.error(f"API request failed: {e}")
+        raise
+data_processing/
+This folder cleans, transforms, and encrypts verified data before storage, ensuring consistency, security, and integrity.
+
+clean_data.py:
+Purpose: Cleanses user identity and credential data, standardizing formats and removing inconsistencies.
+Coding Requirements:
+Define a DataCleaner class with static methods for cleaning specific data types, such as names, emails, dates, and phone numbers, using libraries like re for regex and datetime for date parsing, ensuring data standardization.
+Implement robust error handling for invalid data, logging errors with structured logging for easy analysis, and possibly raising custom exceptions for critical issues.
+Handle edge cases, such as special characters in names, multiple date formats, and invalid email domains, with fallback values where appropriate.
+Ensure data standardization, e.g., title-casing names, lower-casing emails, and formatting dates as YYYY-MM-DD, aligning with international standards.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+import re
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+class DataCleaner:
+    @staticmethod
+    def clean_name(name: str) -> str:
+        cleaned = name.strip().title()
+        if not re.match(r"^[A-Za-z \-']+$", cleaned):
+            logger.error(f"Invalid name format: {name}", extra={"input": name})
+            raise ValueError("Invalid name format: must contain only letters, spaces, hyphens, or apostrophes")
+        return cleaned
+
+    @staticmethod
+    def clean_email(email: str) -> str:
+        cleaned = email.strip().lower()
+        if not re.match(r"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$", cleaned):
+            logger.error(f"Invalid email format: {email}", extra={"input": email})
+            raise ValueError("Invalid email format: must be a valid email address")
+        return cleaned
+
+    @staticmethod
+    def clean_date(date_str: str) -> str:
+        try:
+            datetime.strptime(date_str, "%Y-%m-%d")
+            return date_str
+        except ValueError:
+            logger.error(f"Invalid date format: {date_str}", extra={"input": date_str})
+            raise ValueError("Invalid date format: must be YYYY-MM-DD")
+
+    @staticmethod
+    def clean_phone(phone: str) -> str:
+        cleaned = re.sub(r"[^\d+]", "", phone)
+        if not re.match(r"^\+?[1-9]\d{7,14}$", cleaned):
+            logger.error(f"Invalid phone number: {phone}", extra={"input": phone})
+            raise ValueError("Invalid phone number: must be 8-15 digits, optionally starting with +")
+        return cleaned
+transform_data.py:
+Purpose: Transforms structured data into appropriate formats for storage in PostgreSQL and Hyperledger Indy.
+Coding Requirements:
+Implement a DataTransformer class to map cleaned data to models defined in storage/postgres_models.py, using SQLAlchemy for database operations, ensuring data integrity.
+Handle different types of credentials, mapping them to predefined schemas in Hyperledger Indy, using the Indy SDK for ledger operations, supporting zero-knowledge proofs for privacy.
+Ensure asynchronous processing for non-blocking operations, using asyncio for ledger interactions, optimizing for performance under high load.
+Log transformation steps and any errors for auditing, with structured logging for easy analysis.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+from uuid import uuid4
+from datetime import datetime
+from storage import postgres_models
+from indy import IndyError, ledger
+import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
+
+class DataTransformer:
+    async def transform_user(self, clean_data: dict) -> postgres_models.User:
+        user = postgres_models.User(
+            user_id=str(uuid4()),
+            first_name=clean_data["first_name"],
+            last_name=clean_data["last_name"],
+            email=clean_data["email"],
+            dob=clean_data["dob"],
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow()
+        )
+        logger.info(f"Transformed user data: {user}", extra={"user_id": user.user_id})
+        return user
+
+    async def transform_credential(self, clean_data: dict, schema_name: str) -> postgres_models.Credential:
+        try:
+            # Register schema if not exists
+            schema_request = await ledger.build_schema_request("issuer_did", schema_name, "1.0", list(clean_data.keys()))
+            schema_response = await ledger.sign_and_submit_request("pool_handle", "wallet_handle", "issuer_did", schema_request)
+            schema_id = schema_response["result"]["txn"]["data"]["data"]["id"]
+            logger.info(f"Registered schema: {schema_name}", extra={"schema_id": schema_id})
+
+            # Create credential definition
+            cred_def_request = await ledger.build_cred_def_request("issuer_did", schema_id, "TAG", "CL", {"support_revocation": True})
+            cred_def_response = await ledger.sign_and_submit_request("pool_handle", "wallet_handle", "issuer_did", cred_def_request)
+            cred_def_id = cred_def_response["result"]["txn"]["data"]["id"]
+            logger.info(f"Created credential definition: {cred_def_id}", extra={"cred_def_id": cred_def_id})
+
+            credential = postgres_models.Credential(
+                credential_id=str(uuid4()),
+                cred_def_id=cred_def_id,
+                user_id=clean_data["user_id"],
+                attributes=str(clean_data),
+                status="Active",
+                created_at=datetime.utcnow()
+            )
+            logger.info(f"Transformed credential: {credential}", extra={"credential_id": credential.credential_id})
+            return credential
+        except IndyError as e:
+            logger.error(f"Credential transformation failed: {e}", extra={"error": str(e)})
+            raise
+encrypt_data.py:
+Purpose: Encrypts sensitive data before storage using OpenSSL.
+Coding Requirements:
+Implement a DataEncryptor class using the cryptography library for encryption, ensuring all sensitive fields (e.g., email, DOB) are encrypted, aligning with security standards.
+Manage encryption keys securely, integrating with storage/openssl_keys.py for key generation and rotation, using hardware security modules (HSMs) for production.
+Use application-managed keys for data at rest, with user keys for specific secure exchanges, ensuring the application can access data as needed, with logging for auditing.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+from cryptography.fernet import Fernet
+from storage import openssl_keys
+import logging
+
+logger = logging.getLogger(__name__)
+
+class DataEncryptor:
+    def __init__(self):
+        self.key_manager = openssl_keys.KeyManager()
+        self.key = self.key_manager.generate_key()
+        logger.info("Initialized DataEncryptor with new key")
+
+    def encrypt_field(self, data: str) -> str:
+        try:
+            f = Fernet(self.key)
+            encrypted = f.encrypt(data.encode()).decode()
+            logger.info("Data encrypted successfully", extra={"data_length": len(data)})
+            return encrypted
+        except Exception as e:
+            logger.error(f"Encryption failed: {e}", extra={"error": str(e)})
+            raise
+
+    def decrypt_field(self, encrypted_data: str) -> str:
+        try:
+            f = Fernet(self.key)
+            decrypted = f.decrypt(encrypted_data.encode()).decode()
+            logger.info("Data decrypted successfully", extra={"data_length": len(decrypted)})
+            return decrypted
+        except Exception as e:
+            logger.error(f"Decryption failed: {e}", extra={"error": str(e)})
+            raise
+storage/
+This folder handles secure and structured data storage in PostgreSQL and Hyperledger Indy.
+
+postgres_models.py:
+Purpose: Defines PostgreSQL table definitions for structured storage.
+Coding Requirements:
+Use SQLModel to define models for User, DID, Schema, Credential, Revocation Registry, Verification Request, and Encryption Key, with appropriate fields and relationships as per the project overview, ensuring data integrity.
+Implement indexes on frequently queried fields (e.g., user_id, email) for performance optimization, using SQLAlchemy's index=True.
+Ensure sensitive data is stored in encrypted form, using columns of type TEXT for encrypted strings, with appropriate annotations.
+Define foreign key relationships, such as User to DID, Credential to User, etc., for data integrity, using SQLModel's Relationship.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+from sqlmodel import SQLModel, Field, Relationship
+from datetime import datetime
+from typing import List, Optional
+
+class User(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    user_id: str = Field(unique=True, index=True)
+    first_name: str
+    last_name: str
+    email: str = Field(encrypted=True)
+    phone_number: Optional[str] = Field(encrypted=True)
+    dob: datetime.date = Field(encrypted=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = Field(default=None)
+    dids: List["DID"] = Relationship(back_populates="user")
+    credentials: List["Credential"] = Relationship(back_populates="user")
+
+class DID(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    did_id: str = Field(unique=True, index=True)
+    user_id: str = Field(foreign_key="user.user_id")
+    public_key: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    user: Optional[User] = Relationship(back_populates="dids")
+
+class Schema(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    schema_id: str = Field(unique=True, index=True)
+    schema_name: str
+    attributes: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CredentialDefinition(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    cred_def_id: str = Field(unique=True, index=True)
+    schema_id: str = Field(foreign_key="schema.schema_id")
+    issuer_did: str
+    signature_type: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    schema: Optional[Schema] = Relationship(back_populates="credential_definitions")
+
+class Credential(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    credential_id: str = Field(unique=True, index=True)
+    cred_def_id: str = Field(foreign_key="credentialdefinition.cred_def_id")
+    user_id: str = Field(foreign_key="user.user_id")
+    attributes: str
+    status: str = Field(default="Active")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    user: Optional[User] = Relationship(back_populates="credentials")
+    credential_definition: Optional[CredentialDefinition] = Relationship(back_populates="credentials")
+
+class RevocationRegistry(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    revocation_id: str = Field(unique=True, index=True)
+    credential_id: str = Field(foreign_key="credential.credential_id")
+    revoked_at: datetime = Field(default_factory=datetime.utcnow)
+    credential: Optional[Credential] = Relationship(back_populates="revocation_registries")
+
+class VerificationRequest(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    verification_id: str = Field(unique=True, index=True)
+    verifier_id: str
+    user_id: str = Field(foreign_key="user.user_id")
+    status: str = Field(default="Pending")
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    user: Optional[User] = Relationship(back_populates="verification_requests")
+
+class EncryptionKey(SQLModel, table=True):
+    id: int = Field(primary_key=True, index=True)
+    key_id: str = Field(unique=True, index=True)
+    user_id: str = Field(foreign_key="user.user_id")
+    public_key: str
+    private_key: str = Field(encrypted=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    user: Optional[User] = Relationship(back_populates="encryption_keys")
+indy_ledger.py:
+Purpose: Handles interactions with Hyperledger Indy for writing and reading data.
+Coding Requirements:
+Implement a IndyLedger class with methods for registering schemas, creating credential definitions, issuing credentials, and revoking them, using the Indy SDK, ensuring correlation resistance and support for DIDs.
+Handle asynchronous operations for non-blocking ledger interactions, logging all operations for auditing, with structured logging for easy analysis.
+Optimize for performance, reusing schemas where possible to avoid ledger bloat, and support zero-knowledge proofs for privacy-preserving operations.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+from indy import IndyError, ledger, wallet, proof
+import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
+
+class IndyLedger:
+    def __init__(self):
+        self.pool_handle = None
+        self.wallet_handle = None
+
+    async def connect(self):
+        try:
+            self.pool_handle = await ledger.open_pool_ledger("pool_config", None)
+            self.wallet_handle = await wallet.open_wallet("wallet_config", None, None)
+            logger.info("Connected to Indy ledger")
+        except IndyError as e:
+            logger.error(f"Failed to connect to Indy ledger: {e}", extra={"error": str(e)})
+            raise
+
+    async def register_schema(self, schema_name: str, schema_version: str, attributes: List[str]):
+        try:
+            schema_request = await ledger.build_schema_request("issuer_did", schema_name, schema_version, attributes)
+            schema_response = await ledger.sign_and_submit_request(self.pool_handle, self.wallet_handle, "issuer_did", schema_request)
+            schema_id = schema_response["result"]["txn"]["data"]["data"]["id"]
+            logger.info(f"Registered schema: {schema_name}", extra={"schema_id": schema_id})
+            return schema_id
+        except IndyError as e:
+            logger.error(f"Schema registration failed: {e}", extra={"error": str(e)})
+            raise
+
+    async def create_credential_definition(self, schema_id: str):
+        try:
+            cred_def_request = await ledger.build_cred_def_request("issuer_did", schema_id, "TAG", "CL", {"support_revocation": True})
+            cred_def_response = await ledger.sign_and_submit_request(self.pool_handle, self.wallet_handle, "issuer_did", cred_def_request)
+            cred_def_id = cred_def_response["result"]["txn"]["data"]["id"]
+            logger.info(f"Created credential definition: {cred_def_id}", extra={"cred_def_id": cred_def_id})
+            return cred_def_id
+        except IndyError as e:
+            logger.error(f"Credential definition creation failed: {e}", extra={"error": str(e)})
+            raise
+
+    async def issue_credential(self, cred_def_id: str, user_did: str, attributes: dict):
+        try:
+            credential_offer = await ledger.build_cred_offer_request("issuer_did", cred_def_id)
+            credential_request = await proof.create_credential_request(self.wallet_handle, user_did, credential_offer, "master_secret_id", None)
+            credential = await proof.create_credential(self.wallet_handle, credential_offer, credential_request, attributes, None, None)
+            logger.info(f"Issued credential for user: {user_did}", extra={"cred_def_id": cred_def_id})
+            return credential
+        except IndyError as e:
+            logger.error(f"Credential issuance failed: {e}", extra={"error": str(e)})
+            raise
+
+    async def revoke_credential(self, cred_def_id: str, credential_id: str):
+        try:
+            revoke_request = await ledger.build_revoke_cred_def_request("issuer_did", cred_def_id, credential_id)
+            await ledger.sign_and_submit_request(self.pool_handle, self.wallet_handle, "issuer_did", revoke_request)
+            logger.info(f"Revoked credential: {credential_id}", extra={"cred_def_id": cred_def_id})
+        except IndyError as e:
+            logger.error(f"Credential revocation failed: {e}", extra={"error": str(e)})
+            raise
+
+    async def close(self):
+        if self.wallet_handle:
+            await wallet.close_wallet(self.wallet_handle)
+        if self.pool_handle:
+            await ledger.close_pool_ledger(self.pool_handle)
+        logger.info("Closed Indy ledger connection")
+openssl_keys.py:
+Purpose: Manages cryptographic key storage and encryption.
+Coding Requirements:
+Implement a KeyManager class to generate, store, and rotate encryption keys using the cryptography library, integrating with OpenSSL, ensuring security for production use.
+Ensure keys are stored securely, possibly using a hardware security module (HSM) or a key management service like AWS KMS, with logging for auditing.
+Implement key rotation policies, with automated rotation schedules, ensuring compliance with security standards.
+Full Code:
+python
+
+Collapse
+
+Wrap
+
+Copy
+from cryptography.hazmat.primitives import serialization, asymmetric
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend
+import logging
+import os
+
+logger = logging.getLogger(__name__)
+
+class KeyManager:
+    def __init__(self):
+        self.key_dir = os.path.join(os.getcwd(), "keys")
+        os.makedirs(self.key_dir, exist_ok=True)
+
+    def generate_key_pair(self):
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend()
+        )
+        public_key = private_key.public_key()
+        logger.info("Generated new key pair")
+        return private_key, public_key
+
+    def store_key(self, private_key, user_id: str):
+        try:
+            serialized_private = private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format
