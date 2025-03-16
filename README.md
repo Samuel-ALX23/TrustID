@@ -531,4 +531,4 @@ It's highly recommended to create a virtual environment to manage your project d
 These details are captured, verified, and stored in the system as per the user’s consent and system permissions.
 
 ## 📞 Contact
-For questions or support, contact the development team at [support@trustid.com](mailto:support@trustid.com).
+For questions or support, contact the Data Engineering team at [support@trustid.com](mailto:support@trustid.com).
