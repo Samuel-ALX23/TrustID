@@ -1,90 +1,80 @@
-# 🚀 TrustID: Blockchain-Powered Digital Identity Verification 
-# TrustID Data Engineering
-
-
+# TrustID: Blockchain-Powered Digital Identity Verification
 
 TrustID is a blockchain-powered digital identity verification system that ensures secure, tamper-proof, and verifiable credentials. Built on **Hyperledger Indy** and **PostgreSQL**, TrustID allows users to manage and share their credentials (e.g., National ID, Passports, Degrees) with organizations in a privacy-preserving, decentralized way.
 
-## 🔹 Key Features
-- ✅ **Decentralized Identifiers (DIDs)** for secure user authentication
-- ✅ **Verifiable Credentials** stored on blockchain for authenticity
-- ✅ **Automated Data Extraction** using OCR/AI for easy document verification
-- ✅ **Revocation Registry** to track and prevent fraudulent credentials
-- ✅ **Seamless Integration** for organizations to verify credentials in real-time
-
-
-## 🛠 Technologies Used
-
-| Component            | Technology Used |
-|----------------------|----------------|
-| **Blockchain Ledger** | Hyperledger Indy  → Decentralized Identity Ledger |
-| **Database**        | PostgreSQL → User & Credential Storage |
-| **Encryption**      | OpenSSL  → Encryption & Key Management |
-| **Backend**        | Node.js |
-| **Version Control** | Git & GitHub |
-| **Dev Environment** | VS Code, Jupyter Notebook |
-| **scripting** | Python|
-
 ---
-
+---
 
 ## 📌 Our Mission
 To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
 
 ---
 
+## 🔹 Key Features
+- ✅ **Decentralized Identifiers (DIDs)** for secure user authentication.
+- ✅ **Verifiable Credentials** stored on blockchain for authenticity.
+- ✅ **Automated Data Extraction** using OCR/AI for easy document verification.
+- ✅ **Revocation Registry** to track and prevent fraudulent credentials.
+- ✅ **Seamless Integration** for organizations to verify credentials in real-time.
+
+---
+
+## 🛠 Technologies Used
+
+| Component            | Technology Used |
+|----------------------|-----------------|
+| **Blockchain Ledger** | Hyperledger Indy  → Decentralized Identity Ledger |
+| **Database**        | PostgreSQL → User & Credential Storage |
+| **Encryption**      | OpenSSL  → Encryption & Key Management |
+| **Backend**        | Node.js |
+| **Version Control** | Git & GitHub |
+| **Dev Environment** | VS Code, Jupyter Notebook |
+| **Scripting**       | Python |
+
+
+## 📌 Our Mission
+To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
+
+
 ## 📂 Project Structure
+
 ```
 📦 TrustID Data Engineering
 ├── 📥 data_ingestion/                # Handles data intake from users and documents
-│   ├── 📂 user_data/
-│   │   ├── 📜 receive_verified_data.py       # Ingests and validates user identity data
-│   ├── 📂 document_data/
-│   │   ├── 📜 receive_verified_credentials.py # Ingests verified documents and credentials
+│   ├── 📜 receive_verified_data.py       # Ingests and validates user identity data
+│   ├── 📜 receive_verified_credentials.py # Ingests verified documents and credentials
 │
 ├── 🔄 data_processing/              # Cleans, transforms, and encrypts identity & credential data
-│   ├── 🧹 clean_identity_data.py        # Cleanses user identity data
-│   ├── 🧹 clean_credential_data.py       # Cleanses document credential data
-│   ├── 🔄 transform_identity_data.py     # Transforms structured user data
-│   ├── 🔄 transform_credential_data.py   # Transforms structured credential data
-│   ├── 🔐 encrypt_data.py                # Encrypts data before storage
+│   ├── 📜 clean_data.py                # Cleanses user and credential data
+│   ├── 📜 transform_data.py            # Transforms structured data for storage
+│   ├── 📜 encrypt_data.py              # Encrypts data before storage
 │
 ├── 🗄️ storage/                      # Handles database and secure storage
-│   ├── 🛢️ postgres_models.py           # Defines PostgreSQL models for structured storage
-│   ├── 📜 indy_write.py                # Writes data to Hyperledger Indy blockchain
-│   ├── 📜 indy_read.py                 # Reads data from Hyperledger Indy
-│   ├── 🔑 openssl_keys.py              # Manages OpenSSL keys for encryption
+│   ├── 📜 postgres_models.py           # Defines PostgreSQL models for structured storage
+│   ├── 📜 indy_ledger.py               # Handles Hyperledger Indy ledger interactions
+│   ├── 📜 openssl_keys.py              # Manages OpenSSL keys for encryption
 │
 ├── 🔗 integration/                   # Interfaces with external systems
-│   ├── 🌐 backend_api.py              # Connects with TrustID backend
-│   ├── 🔗 indy_api.py                 # Integrates with Hyperledger Indy
-│   ├── 📊 analytics_api.py            # Provides analytics and insights
+│   ├── 📜 backend_api.py              # Connects with TrustID backend
+│   ├── 📜 indy_api.py                 # Integrates with Hyperledger Indy
+│   ├── 📜 analytics_api.py            # Provides analytics and insights
 │
 ├── ⚙️ config/                        # Stores configuration files
-│   ├── ⚙️ settings.py                 # Global application settings
-│   ├── 🛢️ database.py                 # Database connection settings
+│   ├── 📜 settings.py                 # Global application settings
+│   ├── 📜 database.py                 # Database connection settings
 │
 ├── 📜 scripts/                       # Utility scripts for setup
-│   ├── 🛠️ setup_db.py                 # Initializes PostgreSQL database
-│   ├── 🔗 setup_indy.py               # Sets up Indy ledger environment
+│   ├── 📜 setup_db.py                 # Initializes PostgreSQL database
+│   ├── 📜 setup_indy.py               # Sets up Indy ledger environment
 │
 ├── 🧪 tests/                         # Unit and integration tests
-│   ├── ✅ test_data_pipeline.py       # Tests the entire data pipeline
+│   ├── 📜 test_data_pipeline.py       # Tests the entire data pipeline
 │
 ├── 🐳 docker/                        # Containerization setup
-│   ├── 🐳 Dockerfile                   # Docker image configuration
-│   ├── 🔧 docker-compose.yml          # Multi-container orchestration
-│   ├── 🚫 .dockerignore               # Excludes files from Docker builds
+│   ├── 📜 Dockerfile                   # Docker image configuration
+│   ├── 📜 docker-compose.yml          # Multi-container orchestration
+│   ├── 📜 .dockerignore               # Excludes files from Docker builds
 │   ├── 📜 Makefile                    # Automates build commands
-│
-├── 🔄 high_availability/             # Ensures fault tolerance & caching
-│   ├── 🔁 postgres_replication_setup.py # Sets up PostgreSQL replication
-│   ├── ⚡ redis_cache.py              # Implements Redis caching for performance
-│
-├── 🔧 ci_cd/                         # Continuous Integration & Deployment
-│   ├── 🛠️ github_actions.yml          # Automates GitHub CI/CD workflows
-│   ├── 🛠️ gitlab_ci.yml               # Automates GitLab CI/CD workflows
-│   ├── 📜 docker_auto_build.sh        # Automates Docker image builds
 │
 ├── 📜 requirements.txt                # List of dependencies
 ├── 📖 README.md                       # Documentation
@@ -92,75 +82,129 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 
 ---
 
-## Folder Structure & Explanations
+## 🚀 Getting Started
 
-### 📥 data_ingestion/  
-Handles data intake from users and documents after verification. This ensures that only validated data enters the pipeline.  
-- **📂 user_data/** - Processes verified user identity data.  
-  - **📜 receive_verified_data.py** ⚙️: Ingests and validates user identity data.  
-- **📂 document_data/** - Handles verified documents and credentials.  
-  - **📜 receive_verified_credentials.py** 🔑: Stores validated credentials (licenses, certificates, ID cards, etc.).  
+### Prerequisites
+- Python 3.9+
+- PostgreSQL
+- Docker (optional, for containerization)
 
-### 🔄 data_processing/  
-Cleans, transforms, and encrypts only verified data before storage. This ensures data consistency, security, and integrity.  
-- **🧹 clean_identity_data.py** 🧼: Cleanses user identity data, standardizing formats and removing inconsistencies.  
-- **🧹 clean_credential_data.py** 🧼: Cleanses document credential data for structured storage.  
-- **🔄 transform_identity_data.py** 🔄: Maps and structures identity data into a usable format.  
-- **🔄 transform_credential_data.py** 🔄: Structures credential-related data before storage.  
-- **🔐 encrypt_data.py** 🔒: Uses OpenSSL encryption to secure sensitive credentials before storage.  
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/trustid-data-engineering.git
+   cd trustid-data-engineering
+   ```
 
-### 🗄️ storage/  
-Handles secure and structured data storage in PostgreSQL and Hyperledger Indy.  
-- **🛢️ postgres_models.py** 🗄️: Defines PostgreSQL tables for structured data storage.  
-- **📜 indy_write.py** 📚: Writes verifiable credentials to Hyperledger Indy.  
-- **📜 indy_read.py** 📚: Reads and retrieves data from Hyperledger Indy.  
-- **🔑 openssl_keys.py** 🔑: Manages cryptographic key storage and encryption.  
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 🔗 integration/  
-Facilitates communication between the data pipeline and external systems, including APIs and blockchain.  
-- **🌐 backend_api.py** 🌎: Connects with the TrustID backend to receive verified data.  
-- **🔗 indy_api.py** 🔄: Handles interactions with Hyperledger Indy for credential verification.  
-- **📊 analytics_api.py** 📈: Provides data insights and analytics.  
+3. Set up the database:
+   ```bash
+   python scripts/setup_db.py
+   ```
 
-### ⚙️ config/  
-Contains all configuration settings related to databases, encryption, and system parameters.  
-- **⚙️ settings.py** 🛠️: Stores global configuration parameters.  
-- **🛢️ database.py** 🗄️: Manages PostgreSQL database connections and settings.  
+4. Set up the Indy ledger:
+   ```bash
+   python scripts/setup_indy.py
+   ```
 
-### 📜 scripts/  
-Helper scripts for initializing the database and blockchain ledger.  
-- **🛠️ setup_db.py** ⚙️: Initializes PostgreSQL database tables.  
-- **🔗 setup_indy.py** 📜: Configures schemas in Hyperledger Indy.  
+5. Run the application:
+   ```bash
+   docker-compose up -d
+   ```
 
-### 🧪 tests/  
-Ensures that all data pipelines function correctly.  
-- **✅ test_data_pipeline.py** 🔬: Tests ingestion, processing, and storage components.  
+---
 
-### 🐳 docker/  
-Contains files for containerization and orchestration.  
-- **🐳 Dockerfile** 🏗️: Configures Docker container image.  
-- **🔧 docker-compose.yml** ⚙️: Defines multi-container setup for the project.  
-- **🚫 .dockerignore** 🚧: Specifies files to exclude from Docker builds.  
-- **📜 Makefile** 📋: Automates build and deployment commands.  
+## 🧪 Testing
+Run the test suite to verify the functionality:
+```bash
+pytest tests/
+```
 
-### 🔄 high_availability/  
-Ensures system reliability, fault tolerance, and caching for performance optimization.  
-- **🔁 postgres_replication_setup.py** 🛢️: Sets up PostgreSQL replication for high availability.  
-- **⚡ redis_cache.py** ⚡: Implements Redis caching to enhance data retrieval speed.  
+For load testing, use Locust:
+```bash
+locust -f tests/locustfile.py --host=http://localhost:8000
+```
 
-### 🔧 ci_cd/  
-Manages Continuous Integration & Deployment for automation.  
-- **🛠️ github_actions.yml** 🏗️: Defines GitHub workflows for CI/CD automation.  
-- **🛠️ gitlab_ci.yml** 🏗️: Defines GitLab pipelines for CI/CD integration.  
-- **📜 docker_auto_build.sh** 🔄: Automates Docker image builds for deployment.  
+---
 
-### 📜 requirements.txt  
-Lists all dependencies required for the project.
+## 🔧 CI/CD
+The project includes CI/CD pipelines for GitHub Actions and GitLab CI. Configure your repository to automate testing and deployment.
 
-### 📖 README.md  
-Project documentation and usage guidelines.  
+---
+
+## 📜 License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📞 Contact
+For questions or support, contact the development team at [support@trustid.com](mailto:support@trustid.com).
 
 
+### **Folder and File Explanations**
+
+#### **📥 data_ingestion/**
+- **Purpose**: Handles data intake from users and documents after verification.
+- **Files**:
+  - `receive_verified_data.py`: Ingests and validates user identity data from the backend.
+  - `receive_verified_credentials.py`: Ingests verified documents and credentials.
+
+#### **🔄 data_processing/**
+- **Purpose**: Cleans, transforms, and encrypts verified data before storage.
+- **Files**:
+  - `clean_data.py`: Cleanses user and credential data, ensuring consistency and correctness.
+  - `transform_data.py`: Transforms structured data into formats suitable for storage in PostgreSQL and Hyperledger Indy.
+  - `encrypt_data.py`: Encrypts sensitive data using OpenSSL before storage.
+
+#### **🗄️ storage/**
+- **Purpose**: Handles secure and structured data storage in PostgreSQL and Hyperledger Indy.
+- **Files**:
+  - `postgres_models.py`: Defines PostgreSQL models for structured storage.
+  - `indy_ledger.py`: Manages interactions with the Hyperledger Indy ledger.
+  - `openssl_keys.py`: Manages encryption keys using OpenSSL.
+
+#### **🔗 integration/**
+- **Purpose**: Facilitates communication between the data pipeline and external systems.
+- **Files**:
+  - `backend_api.py`: Connects with the TrustID backend to receive verified data.
+  - `indy_api.py`: Handles interactions with Hyperledger Indy for credential verification.
+  - `analytics_api.py`: Provides data insights and analytics.
+
+#### **⚙️ config/**
+- **Purpose**: Stores configuration settings for the application.
+- **Files**:
+  - `settings.py`: Contains global configuration parameters.
+  - `database.py`: Manages PostgreSQL database connections and settings.
+
+#### **📜 scripts/**
+- **Purpose**: Contains utility scripts for initializing the database and blockchain ledger.
+- **Files**:
+  - `setup_db.py`: Initializes PostgreSQL database tables.
+  - `setup_indy.py`: Configures schemas in Hyperledger Indy.
+
+#### **🧪 tests/**
+- **Purpose**: Ensures the functionality and reliability of the data pipeline.
+- **Files**:
+  - `test_data_pipeline.py`: Tests the entire data pipeline, including ingestion, processing, and storage.
+
+#### **🐳 docker/**
+- **Purpose**: Contains files for containerization and orchestration.
+- **Files**:
+  - `Dockerfile`: Configures the Docker container image.
+  - `docker-compose.yml`: Defines the multi-container setup for the project.
+  - `.dockerignore`: Specifies files to exclude from Docker builds.
+  - `Makefile`: Automates build and deployment commands.
+
+#### **📜 requirements.txt**
+- **Purpose**: Lists all Python dependencies required for the project.
+
+#### **📖 README.md**
+- **Purpose**: Provides documentation and usage guidelines for the project.
+- 
 
 ## Data Workflow Summary
 
