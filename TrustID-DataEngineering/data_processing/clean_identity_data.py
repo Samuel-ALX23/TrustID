@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 import logging
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,9 @@ class DataCleaner:
             raise ValueError("Invalid date format: must be YYYY-MM-DD")
 
     @staticmethod
-    def clean_phone(phone: str) -> str:
+    def clean_phone(phone: Optional[str]) -> Optional[str]:
+        if not phone:
+            return None
         cleaned = re.sub(r"[^\d+]", "", phone)
         if not re.match(r"^\+?[1-9]\d{7,14}$", cleaned):
             logger.error(f"Invalid phone number: {phone}", extra={"input": phone})

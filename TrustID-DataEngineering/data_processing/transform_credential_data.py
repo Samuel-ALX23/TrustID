@@ -1,14 +1,15 @@
 from uuid import uuid4
 from datetime import datetime
 from storage import postgres_models
-from indy import IndyError, ledger
+from indy import ledger
 import asyncio
 import logging
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
 class DataTransformer:
-    async def transform_user(self, clean_data: dict) -> postgres_models.User:
+    async def transform_user(self, clean_data: Dict) -> postgres_models.User:
         user = postgres_models.User(
             user_id=str(uuid4()),
             first_name=clean_data["first_name"],
@@ -21,7 +22,7 @@ class DataTransformer:
         logger.info(f"Transformed user data: {user}", extra={"user_id": user.user_id})
         return user
 
-    async def transform_credential(self, clean_data: dict, schema_name: str) -> postgres_models.Credential:
+    async def transform_credential(self, clean_data: Dict, schema_name: str) -> postgres_models.Credential:
         try:
             # Register schema if not exists
             schema_request = await ledger.build_schema_request("issuer_did", schema_name, "1.0", list(clean_data.keys()))
@@ -45,6 +46,6 @@ class DataTransformer:
             )
             logger.info(f"Transformed credential: {credential}", extra={"credential_id": credential.credential_id})
             return credential
-        except IndyError as e:
+        except ledger.IndyError as e:
             logger.error(f"Credential transformation failed: {e}", extra={"error": str(e)})
             raise
