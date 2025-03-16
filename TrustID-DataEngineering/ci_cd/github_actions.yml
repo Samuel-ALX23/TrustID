@@ -1,25 +1,22 @@
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+name: TrustID CI/CD
+on: [push]
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: '3.9'
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
       - name: Run tests
-        run: pytest
+        run: pytest tests/
+      - name: Build Docker image
+        run: docker build -t trustid:latest .
+      - name: Push to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker tag trustid:latest ${{ secrets.DOCKER_USERNAME }}/trustid:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/trustid:latest

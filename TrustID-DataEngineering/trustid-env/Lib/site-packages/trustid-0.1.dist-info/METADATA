@@ -1,0 +1,8 @@
+Metadata-Version: 2.2
+Name: trustid
+Version: 0.1
+Requires-Dist: pytest
+Requires-Dist: redis
+Requires-Dist: cryptography
+Requires-Dist: indy
+Dynamic: requires-dist

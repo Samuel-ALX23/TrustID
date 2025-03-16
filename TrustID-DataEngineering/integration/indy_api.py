@@ -1,35 +1,24 @@
-import logging
-from indy import ledger, wallet
+from indy import IndyError, ledger
 import asyncio
-from typing import Optional
-from indy_sdk import proof
+import logging
+from storage import indy_ledger
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class IndyAPI:
-    def __init__(self, pool_handle: str, wallet_handle: str, issuer_did: str):
-        self.pool_handle = pool_handle
-        self.wallet_handle = wallet_handle
-        self.issuer_did = issuer_did
+    def __init__(self):
+        self.ledger = indy_ledger.IndyLedger()
 
-    async def register_schema(self, schema_name: str, schema_version: str, attributes: list) -> Optional[str]:
+    async def verify_credential(self, credential_id: str):
         try:
-            schema_request = await ledger.build_schema_request(self.issuer_did, schema_name, schema_version, attributes)
-            schema_response = await ledger.sign_and_submit_request(self.pool_handle, self.wallet_handle, self.issuer_did, schema_request)
-            schema_id = schema_response["result"]["txn"]["data"]["data"]["id"]
-            logger.info(f"Registered schema: {schema_name}", extra={"schema_id": schema_id})
-            return schema_id
-        except ledger.IndyError as e:
-            logger.error(f"Schema registration failed: {e}")
-            return None
-
-    async def issue_credential(self, cred_def_id: str, user_did: str, attributes: dict) -> Optional[dict]:
-        try:
-            credential_offer = await ledger.build_cred_offer_request(self.issuer_did, cred_def_id)
-            credential_request = await proof.create_credential_request(self.wallet_handle, user_did, credential_offer, "master_secret_id", None)
-            credential = await proof.create_credential(self.wallet_handle, credential_offer, credential_request, attributes, None, None)
-            logger.info(f"Issued credential for user: {user_did}", extra={"cred_def_id": cred_def_id})
-            return credential
-        except ledger.IndyError as e:
-            logger.error(f"Credential issuance failed: {e}")
-            return None
+            await self.ledger.connect()
+            request = await ledger.build_get_cred_def_request("did", credential_id)
+            response = await ledger.sign_and_submit_request(self.ledger.pool_handle, self.ledger.wallet_handle, "did", request)
+            logger.info(f"Verified credential: {credential_id}", extra={"response": response})
+            return response
+        except IndyError as e:
+            logger.error(f"Credential verification failed: {e}", extra={"error": str(e)})
+            raise
+        finally:
+            await self.ledger.close()

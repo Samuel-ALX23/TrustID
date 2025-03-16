@@ -1,14 +1,22 @@
-from indy import pool, wallet
+from storage import indy_ledger
 import asyncio
-from config.settings import settings
+import logging
 
-async def initialize_indy():
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+async def init_indy():
     try:
-        await pool.create_pool_ledger_config(settings.INDY_POOL_NAME, None)
-        await wallet.create_wallet(settings.INDY_POOL_NAME, settings.INDY_WALLET_NAME, None, None, settings.INDY_WALLET_KEY)
-        print("Indy ledger and wallet initialized successfully.")
+        logger.info("Initializing Hyperledger Indy schemas")
+        indy = indy_ledger.IndyLedger()
+        await indy.connect()
+        await indy.register_schema("NationalID", "1.0", ["full_name", "id_number", "dob"])
+        await indy.register_schema("Passport", "1.0", ["holder_name", "passport_number", "issue_date"])
+        await indy.close()
+        logger.info("Indy initialization complete")
     except Exception as e:
-        print(f"Failed to initialize Indy: {e}")
+        logger.error(f"Indy setup failed: {e}", extra={"error": str(e)})
+        raise
 
 if __name__ == "__main__":
-    asyncio.run(initialize_indy())
+    asyncio.run(init_indy())

@@ -1,0 +1,8 @@
+README.md
+setup.py
+tests/test_data_pipeline.py
+trustid.egg-info/PKG-INFO
+trustid.egg-info/SOURCES.txt
+trustid.egg-info/dependency_links.txt
+trustid.egg-info/requires.txt
+trustid.egg-info/top_level.txt

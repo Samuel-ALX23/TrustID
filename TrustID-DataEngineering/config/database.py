@@ -1,8 +1,22 @@
-from sqlmodel import create_engine, Session
-from config.settings import settings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from config import settings
 
-engine = create_engine(settings.POSTGRES_URL, echo=True)
+# Use the DATABASE_URL from settings
+engine = create_engine(
+    settings.DATABASE_URL,
+    pool_size=10,
+    max_overflow=20,
+    pool_timeout=30,
+    pool_recycle=1800,
+    connect_args={"sslmode": "require"}
+)
 
-def get_session():
-    with Session(engine) as session:
-        yield session
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

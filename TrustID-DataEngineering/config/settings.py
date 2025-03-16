@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings:
-    POSTGRES_URL = os.getenv("POSTGRES_URL", "postgresql://user:password@localhost:5432/trustid")
-    INDY_POOL_NAME = os.getenv("INDY_POOL_NAME", "trustid_pool")
-    INDY_WALLET_NAME = os.getenv("INDY_WALLET_NAME", "trustid_wallet")
-    INDY_WALLET_KEY = os.getenv("INDY_WALLET_KEY", "trustid_key")
-    BACKEND_API_KEY = os.getenv("BACKEND_API_KEY", "default_api_key")
-    ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY", "default_encryption_key")
+    DB_USER: str = os.getenv("DB_USER", "postgres.kzlhfmtpmxhbujfengke")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "Hack#2024")
+    DB_HOST: str = os.getenv("DB_HOST", "aws-0-eu-central-1.pooler.supabase.com")
+    DB_PORT: int = int(os.getenv("DB_PORT", 5432))
+    DB_NAME: str = os.getenv("DB_NAME", "postgres")
+    DATABASE_URL: str = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 settings = Settings()

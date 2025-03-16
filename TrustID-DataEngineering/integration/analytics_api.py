@@ -1,33 +1,19 @@
-import logging
-from typing import Dict, List
+import pandas as pd
+from sqlalchemy.orm import Session
 from storage import postgres_models
-from sqlmodel import Session, select
+import logging
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-class AnalyticsAPI:
-    def __init__(self, session: Session):
-        self.session = session
-
-    def get_user_credentials(self, user_id: str) -> List[Dict]:
-        try:
-            user = self.session.exec(select(postgres_models.User).where(postgres_models.User.user_id == user_id)).first()
-            if not user:
-                logger.error(f"User not found: {user_id}")
-                return []
-            return [cred.dict() for cred in user.credentials]
-        except Exception as e:
-            logger.error(f"Failed to fetch user credentials: {e}")
-            return []
-
-    def get_credential_stats(self) -> Dict:
-        try:
-            total_credentials = self.session.exec(select(postgres_models.Credential)).count()
-            active_credentials = self.session.exec(select(postgres_models.Credential).where(postgres_models.Credential.status == "Active")).count()
-            return {
-                "total_credentials": total_credentials,
-                "active_credentials": active_credentials
-            }
-        except Exception as e:
-            logger.error(f"Failed to fetch credential stats: {e}")
-            return {}
+def get_credential_analytics(db: Session):
+    try:
+        credentials = db.query(postgres_models.Credential).all()
+        df = pd.DataFrame([(c.credential_id, c.created_at, c.status) for c in credentials], 
+                         columns=["credential_id", "created_at", "status"])
+        analytics = df.groupby("status").count().to_dict()
+        logger.info("Generated credential analytics", extra={"analytics": analytics})
+        return analytics
+    except Exception as e:
+        logger.error(f"Analytics generation failed: {e}", extra={"error": str(e)})
+        raise

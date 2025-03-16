@@ -1,0 +1,4 @@
+pytest
+redis
+cryptography
+indy

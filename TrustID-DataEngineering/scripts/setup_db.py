@@ -1,11 +1,21 @@
-from sqlmodel import SQLModel, create_engine
-from config.settings import settings
+from alembic import command
+from alembic.config import Config
+import logging
 from storage import postgres_models
+from config import database
 
-def initialize_db():
-    engine = create_engine(settings.POSTGRES_URL)
-    SQLModel.metadata.create_all(engine)
-    print("Database tables created successfully.")
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+def init_db():
+    try:
+        logger.info("Initializing PostgreSQL database with Alembic migrations")
+        alembic_cfg = Config("alembic.ini")
+        command.upgrade(alembic_cfg, "head")
+        logger.info("Database initialization complete")
+    except Exception as e:
+        logger.error(f"Database setup failed: {e}", extra={"error": str(e)})
+        raise
 
 if __name__ == "__main__":
-    initialize_db()
+    init_db()

@@ -3,12 +3,13 @@ from storage import openssl_keys
 import logging
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class DataEncryptor:
     def __init__(self):
         self.key_manager = openssl_keys.KeyManager()
-        self.key = self.key_manager.generate_key()
-        logger.info("Initialized DataEncryptor with new key")
+        self.key = self.key_manager.get_key()
+        logger.info("Initialized DataEncryptor with AWS KMS key")
 
     def encrypt_field(self, data: str) -> str:
         try:

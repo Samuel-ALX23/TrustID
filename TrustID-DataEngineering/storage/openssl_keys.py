@@ -1,37 +1,53 @@
-from cryptography.hazmat.primitives import serialization, asymmetric
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
+import boto3
 import logging
-import os
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 class KeyManager:
     def __init__(self):
-        self.key_dir = os.path.join(os.getcwd(), "keys")
-        os.makedirs(self.key_dir, exist_ok=True)
+        self.kms = boto3.client('kms', region_name='us-east-1')  # Configure with your AWS region
+        self.key_id = self.create_key()
 
-    def generate_key_pair(self):
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=2048,
-            backend=default_backend()
+    def create_key(self) -> str:
+        response = self.kms.create_key(
+            Description='TrustID Encryption Key',
+            KeyUsage='ENCRYPT_DECRYPT',
+            CustomerMasterKeySpec='SYMMETRIC_DEFAULT',
+            Tags=[{'TagKey': 'Project', 'TagValue': 'TrustID'}]
         )
-        public_key = private_key.public_key()
-        logger.info("Generated new key pair")
-        return private_key, public_key
+        key_id = response['KeyMetadata']['KeyId']
+        logger.info(f"Created new KMS key: {key_id}")
+        return key_id
 
-    def store_key(self, private_key, user_id: str):
-        try:
-            serialized_private = private_key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption()
-            )
-            key_path = os.path.join(self.key_dir, f"{user_id}_private.pem")
-            with open(key_path, "wb") as f:
-                f.write(serialized_private)
-            logger.info(f"Stored private key for user: {user_id}", extra={"key_path": key_path})
-        except Exception as e:
-            logger.error(f"Failed to store private key: {e}", extra={"error": str(e)})
-            raise
+    def get_key(self) -> bytes:
+        response = self.kms.generate_data_key(
+            KeyId=self.key_id,
+            KeySpec='AES_256'
+        )
+        return response['Plaintext']
+
+    def encrypt(self, data: str) -> str:
+        response = self.kms.encrypt(
+            KeyId=self.key_id,
+            Plaintext=data.encode()
+        )
+        encrypted = response['CiphertextBlob'].hex()
+        logger.info("Encrypted data with KMS", extra={"data_length": len(data)})
+        return encrypted
+
+    def decrypt(self, encrypted_data: str) -> str:
+        response = self.kms.decrypt(
+            CiphertextBlob=bytes.fromhex(encrypted_data),
+            KeyId=self.key_id
+        )
+        decrypted = response['Plaintext'].decode()
+        logger.info("Decrypted data with KMS", extra={"data_length": len(decrypted)})
+        return decrypted
+
+    def rotate_key(self):
+        old_key_id = self.key_id
+        self.key_id = self.create_key()
+        self.kms.schedule_key_deletion(KeyId=old_key_id, PendingWindowInDays=7)
+        logger.info(f"Rotated key from {old_key_id} to {self.key_id}")
