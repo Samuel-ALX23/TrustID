@@ -3,7 +3,6 @@
 TrustID is a blockchain-powered digital identity verification system that ensures secure, tamper-proof, and verifiable credentials. Built on **Hyperledger Indy** and **PostgreSQL**, TrustID allows users to manage and share their credentials (e.g., National ID, Passports, Degrees) with organizations in a privacy-preserving, decentralized way.
 
 ---
----
 
 ## 📌 Our Mission
 To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
@@ -30,10 +29,6 @@ To provide a trustworthy, efficient, and privacy-centric digital identity system
 | **Version Control** | Git & GitHub |
 | **Dev Environment** | VS Code, Jupyter Notebook |
 | **Scripting**       | Python |
-
-
-## 📌 Our Mission
-To provide a trustworthy, efficient, and privacy-centric digital identity system for seamless verification across industries like **finance, healthcare, and education**.
 
 
 ## 📂 Project Structure
@@ -140,10 +135,6 @@ The project includes CI/CD pipelines for GitHub Actions and GitLab CI. Configure
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
-
-## 📞 Contact
-For questions or support, contact the development team at [support@trustid.com](mailto:support@trustid.com).
-
 
 ### **Folder and File Explanations**
 
@@ -538,3 +529,6 @@ It's highly recommended to create a virtual environment to manage your project d
 - **Business Registration Certificate**
 
 These details are captured, verified, and stored in the system as per the user’s consent and system permissions.
+
+## 📞 Contact
+For questions or support, contact the development team at [support@trustid.com](mailto:support@trustid.com).
