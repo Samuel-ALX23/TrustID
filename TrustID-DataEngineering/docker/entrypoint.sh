@@ -1,3 +1,3 @@
 #!/bin/sh
-echo "Running entrypoint script"
-exec "$@"
+echo "Starting application..."
+exec python main.py
