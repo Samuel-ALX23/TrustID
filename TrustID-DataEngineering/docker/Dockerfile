@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Ensure entrypoint.sh has the right permissions
-RUN chmod +x /app/docker/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-# Set the entrypoint and default command
-ENTRYPOINT ["/app/docker/entrypoint.sh"]
+# Set the entrypoint and default command (using JSON array format)
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["python", "main.py"]

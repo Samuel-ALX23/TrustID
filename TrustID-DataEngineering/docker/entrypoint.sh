@@ -1,3 +1,3 @@
 #!/bin/sh
 echo "Starting application..."
-exec python main.py
+exec gunicorn --bind 0.0.0.0:5000 main:app
