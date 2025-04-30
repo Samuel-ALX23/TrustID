@@ -1,3 +1,3 @@
 #!/bin/sh
-echo "Running entrypoint script"
-exec "$@"
+echo "Starting application..."
+exec gunicorn --bind 0.0.0.0:5000 main:app
